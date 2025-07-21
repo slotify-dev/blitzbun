@@ -1,0 +1,16 @@
+import { index, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
+
+export default pgTable(
+  '[[ moduleSlug ]]',
+  {
+    id: serial('id').primaryKey(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  },
+  (table) => {
+    return {
+      [[ moduleSlug ]]ModuleIdx: index('[[ moduleSlug ]]_module_idx').on(table.module),
+      [[ moduleSlug ]]DatesIdx: index('[[ moduleSlug ]]_dates_idx').on(table.createdAt, table.updatedAt),
+    };
+  }
+);

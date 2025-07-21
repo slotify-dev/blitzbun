@@ -1,0 +1,8 @@
+import { BaseController } from '@blitzbun/core';
+import [[controller]]Repository from '@modules/[[moduleSlug]]/repository/[[controllerSlug]]';
+
+export default class [[controller]]Controller extends BaseController {
+  constructor() {
+    super('[[controllerSlug]]', [[controller]]Repository);
+  }
+}

@@ -1,0 +1,8 @@
+import { HttpRequestContract } from '@blitzbun/http';
+import { z } from 'zod';
+
+export default (_req: HttpRequestContract) => {
+  return z.object({
+
+  });
+};

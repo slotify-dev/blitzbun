@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "dbaeumer.vscode-eslint",
+    "sonarsource.sonarlint-vscode",
+    "kisstkondoros.vscode-codemetrics",
+    "snyk-security.snyk-vulnerability-scanner",
+    "lacroixdavid1.vscode-format-context-menu"
+  ]
+}

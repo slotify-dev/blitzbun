@@ -1,0 +1,17 @@
+import { ConsoleCommand } from '@blitzbun/core';
+import type { Argv } from 'yargs';
+
+export default class [[ command ]]Command extends ConsoleCommand {
+  define(yargs: Argv): Argv {
+    return yargs.command(
+      'command:[[ commandSlug ]]',
+      'Sample command description',
+      () => {},
+      this.handle
+    );
+  }
+
+  async handle(): Promise<void> {
+    // write logic here
+  }
+}

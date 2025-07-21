@@ -1,0 +1,14 @@
+import { AppProvider, AppRegistry, ApplicationContract } from '@blitzbun/core';
+import [[ module ]]Controller from "./controllers/[[ moduleSlug ]]";
+
+export default class [[ module ]]ModuleProvider<T extends AppRegistry> extends AppProvider<T> {
+  async boot(app: ApplicationContract<T>): Promise<void> {
+    const controller = new [[ module ]]Controller();
+    app.get('router')
+      .get("/[[ moduleSlug ]]", controller.list)
+      .post("/[[ moduleSlug ]]", controller.post)
+      .get("/[[ moduleSlug ]]/:uuid", controller.get)
+      .put("/[[ moduleSlug ]]/:uuid", controller.put)
+      .delete("/[[ moduleSlug ]]/:uuid", controller.delete);
+  }
+}

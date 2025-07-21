@@ -1,0 +1,9 @@
+import { HttpRequestContract, HttpResponseContract } from '@blitzbun/http';
+
+export default async function (
+  req: HttpRequestContract,
+  res: HttpResponseContract,
+  next: CallableFunction
+): Promise<unknown> {
+  return next();
+}

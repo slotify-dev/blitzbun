@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "name": "@blitzbun/core",
+  "types": "dist/index.d.ts",
+  "description": "Core module for BlitzBun",
+  "keywords": [
+    "core",
+    "server",
+    "blitzbun",
+    "framework"
+  ],
+  "scripts": {
+    "test": "bun test",
+    "build": "bunx tsc --build"
+  },
+  "dependencies": {
+    "bullmq": "^5.56.4",
+    "chalk": "^5.4.1",
+    "drizzle-orm": "^0.44.3",
+    "lodash": "^4.17.21",
+    "mysql2": "^3.14.2",
+    "node-cron": "^4.2.1",
+    "ora": "^8.2.0",
+    "pg": "^8.16.3",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0",
+    "yargs": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.20",
+    "@types/node-cron": "^3.0.11",
+    "@types/pg": "^8.15.4",
+    "@types/uuid": "^10.0.0",
+    "@types/winston": "^2.4.4",
+    "@types/yargs": "^17.0.33",
+    "typescript": "^5.8.3"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./contracts": {
+      "import": "./dist/contracts/index.js",
+      "types": "./dist/contracts/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ]
+}

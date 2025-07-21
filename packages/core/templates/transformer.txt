@@ -1,0 +1,9 @@
+import { BaseTransformer } from '@blitzbun/core';
+
+export default class [[ module ]]Transformer extends BaseTransformer {
+  async toArray(model: unknown): Promise<unknown> {
+    return {
+      uuid: this.get(model, 'uuid'),
+    };
+  }
+}

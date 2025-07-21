@@ -1,0 +1,5 @@
+dist/
+types/
+build/
+coverage/
+node_modules/

@@ -1,0 +1,57 @@
+{
+  "files": [],
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src",
+    // "database/**/*",
+    // "drizzle.config.ts",
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./dist",
+    // basic settings
+    "lib": [
+      "ESNext"
+    ],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    // bundler mode
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+    // best practices
+    "strict": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    // some stricter flags
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": true,
+    "paths": {
+      "@database/*": [
+        "database/*"
+      ],
+      "@modules/*": [
+        "src/modules/*"
+      ],
+    }
+  },
+  "references": [
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "packages/cache"
+    },
+    {
+      "path": "packages/http"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+import { BaseRepository } from '@blitzbun/core';
+import { HttpRequestContract } from '@blitzbun/http';
+
+import [[ repository ]]Model from "@modules/[[ module ]]/models/[[ repositorySlug ]]";
+import [[ repository ]]Transformer from "@modules/[[ module ]]/transformers/[[ repositorySlug ]]";
+
+export default class [[ repository ]]Repository extends BaseRepository {
+  constructor(request: HttpRequestContract) {
+    super(request, [[ repository ]]Model, new [[ repository ]]Transformer(request));
+  }
+}
