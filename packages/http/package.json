@@ -18,6 +18,8 @@
     "@blitzbun/contracts": "workspace:*",
     "@blitzbun/core": "workspace:*",
     "jsonwebtoken": "^9.0.2",
+    "pino": "^9.9.0",
+    "pino-pretty": "^13.1.1",
     "rate-limiter-flexible": "^7.1.1",
     "redis": "^5.6.0",
     "regexparam": "^3.0.0",
