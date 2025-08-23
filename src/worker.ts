@@ -1,8 +1,6 @@
 import { Application, WorkerKernel } from '@blitzbun/core';
 
-const application = new Application(__dirname);
-
 (async () =>
-  await new WorkerKernel(application)
+  await new WorkerKernel(new Application(__dirname))
     .handle()
     .catch((e) => console.log(e)))();
