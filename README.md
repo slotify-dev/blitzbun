@@ -6,6 +6,18 @@ A modern, Laravel-inspired web framework built with Bun and TypeScript for ultra
 
 BlitzBun is a high-performance web framework that brings the elegant syntax and developer experience of Laravel to the blazing-fast runtime of Bun. It's designed for developers who want to build scalable web applications without compromising on speed or developer productivity.
 
+> **Status: Work in Progress** ⚠️
+
+![Work in Progress](https://img.shields.io/badge/status-work%20in%20progress-orange)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Version](https://img.shields.io/badge/version-0.1.0--alpha-lightgrey)
+
+A high-performance, bun-based framework for building lightning-fast applications.
+
+## ⚠️ Project Status
+
+This project is currently under active development and is not yet ready for production use. Features may be incomplete, unstable, or subject to change.
+
 ## Why BlitzBun?
 
 - **⚡ Lightning Fast**: Built on Bun runtime, delivering exceptional performance for low-latency applications
