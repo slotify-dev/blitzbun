@@ -1,39 +1,27 @@
 {
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // Changed from ESLint
   "editor.formatOnPaste": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit",
     "source.addMissingImports": "explicit"
   },
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/.vscode": true
-  },
-  "git.autofetch": true,
-  "files.encoding": "utf8",
-  "files.trimFinalNewlines": true,
-  "editor.trimAutoWhitespace": true,
-  "search.useGlobalIgnoreFiles": true,
-  "search.useParentIgnoreFiles": true,
-  "files.trimTrailingWhitespace": true,
-  "editor.quickSuggestions": {
-    "strings": true
-  },
-  "editor.tabSize": 2,
   "eslint.enable": true,
-  "editor.formatOnType": true,
-  "eslint.format.enable": true,
-  "editor.detectIndentation": false,
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
+  "eslint.format.enable": false, // Disabled to avoid conflict with Prettier
+  "prettier.requireConfig": true,
+  "prettier.useEditorConfig": false,
+  "editor.tabSize": 2,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
   "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode" // Changed
   },
   "[javascript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode" // Changed
   },
-  "[jsonc]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
-  }
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "editor.rulers": [80], // Helps visualize printWidth
+  "diffEditor.ignoreTrimWhitespace": false
 }
