@@ -1,8 +1,10 @@
 import lodash from 'lodash';
 import path from 'path';
 
+import { ConsoleCommand } from '@blitzbun/contracts';
 import type { Argv } from 'yargs';
-import { ConsoleCommand, FileHelper } from '..';
+import { toPascalCase } from '../utils/common';
+import * as FileHelper from '../utils/file';
 
 interface HandlerArgv {
   module: string;
@@ -35,14 +37,16 @@ export default class CreateModelCommand extends ConsoleCommand {
     if (module) {
       lodash.templateSettings.interpolate = /\[\[([\s\S]+?)\]\]/g;
 
+      const modelName = toPascalCase(model);
       const modulePath = this.app.getModulePath(module);
       const templatePath = path.join(__dirname, '../../templates');
-      const modelName = (model + '').replace(/^([a-z])|\s+([a-z])/g, ($1) => $1.toUpperCase());
 
       const targetDir = path.join(modulePath, 'models');
       FileHelper.createDir(targetDir);
 
-      const targetFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'model.txt')))({ module, model: modelName, moduleSlug: module, modelSlug: model });
+      const targetFile = lodash.template(
+        await FileHelper.getFileAsync(path.join(templatePath, 'model.txt'))
+      )({ module, model: modelName, moduleSlug: module, modelSlug: model });
 
       FileHelper.createFile(path.join(targetDir, `${model}.ts`), targetFile);
     }

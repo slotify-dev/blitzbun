@@ -1,8 +1,10 @@
 import lodash from 'lodash';
 import path from 'path';
 
+import { ConsoleCommand } from '@blitzbun/contracts';
 import type { Argv } from 'yargs';
-import { ConsoleCommand, FileHelper } from '..';
+import { toPascalCase } from '../utils/common';
+import * as FileHelper from '../utils/file';
 
 interface HandlerArgv {
   module: string;
@@ -36,21 +38,28 @@ export default class CreateTransformerCommand extends ConsoleCommand {
     if (module) {
       lodash.templateSettings.interpolate = /\[\[([\s\S]+?)\]\]/g;
 
+      const transformerName = toPascalCase(transformer);
       const modulePath = this.app.getModulePath(module);
       const templatePath = path.join(__dirname, '../../templates');
-      const transformerName = (transformer + '').replace(/^([a-z])|\s+([a-z])/g, ($1) => $1.toUpperCase());
 
       const targetDir = path.join(modulePath, 'transformers');
       FileHelper.createDir(targetDir);
 
-      const targetFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'transformer.txt')))({
+      const targetFile = lodash.template(
+        await FileHelper.getFileAsync(
+          path.join(templatePath, 'transformer.txt')
+        )
+      )({
         module,
-        transformer: transformerName,
-        transformerSlug: transformer,
         moduleSlug: module,
+        transformerSlug: transformer,
+        transformer: transformerName,
       });
 
-      FileHelper.createFile(path.join(targetDir, `${transformer}.ts`), targetFile);
+      FileHelper.createFile(
+        path.join(targetDir, `${transformer}.ts`),
+        targetFile
+      );
     }
   }
 }

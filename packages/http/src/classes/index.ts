@@ -1,5 +1,6 @@
 export { default as HttpRouteCollection } from './collection';
 export { default as HttpRouterContext } from './context';
+export { default as BaseController } from './controller';
 export { default as HttpKernel } from './kernel';
 export { default as HttpRequest } from './request';
 export { default as HttpResponse } from './response';
@@ -8,3 +9,4 @@ export { default as HttpRouter } from './router';
 export { default as HttpServer } from './server';
 export { default as Validator } from './validator';
 export { default as WebSocketRouter } from './wsRouter';
+export { default as WSSessionManager } from './wsSession';

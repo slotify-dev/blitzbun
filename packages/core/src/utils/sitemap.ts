@@ -1,4 +1,4 @@
-import { JsonObject, SiteMapUrl } from '../types';
+import { JsonObject, SiteMapUrl } from '@blitzbun/contracts';
 
 function getBaseUrl(locals: JsonObject): string {
   const raw = locals.baseUrl;
@@ -8,7 +8,10 @@ function getBaseUrl(locals: JsonObject): string {
   return raw.replace(/^http:\/\//, 'https://');
 }
 
-export const sitemapIndex = (locals: JsonObject, sitemaps: SiteMapUrl[]): Response => {
+export const sitemapIndex = (
+  locals: JsonObject,
+  sitemaps: SiteMapUrl[]
+): Response => {
   const baseUrl = getBaseUrl(locals);
 
   const sitemapEntries = sitemaps

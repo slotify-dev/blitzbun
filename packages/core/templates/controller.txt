@@ -1,8 +1,9 @@
-import { BaseController } from '@blitzbun/core';
-import [[controller]]Repository from '@modules/[[moduleSlug]]/repository/[[controllerSlug]]';
+import { HttpRequestContract, HttpResponseContract } from '@blitzbun/contracts';
 
-export default class [[controller]]Controller extends BaseController {
-  constructor() {
-    super('[[controllerSlug]]', [[controller]]Repository);
-  }
+export default class [[controller]]Controller {
+  index = async (req: HttpRequestContract, res: HttpResponseContract) => {
+    return res.status(200).toResponse({
+      success: true,
+    });
+  };
 }

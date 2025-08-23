@@ -1,12 +1,14 @@
+import { EnvContract } from '@blitzbun/contracts';
 import get from 'lodash/get';
 import has from 'lodash/has';
-import { EnvServiceContract } from '../contracts';
 
-export default class EnvService implements EnvServiceContract {
+export default class EnvService implements EnvContract {
   private envVars: Record<string, string>;
 
   constructor() {
-    this.envVars = Object.fromEntries(Object.entries(Bun.env).filter(([, value]) => typeof value === 'string')) as Record<string, string>;
+    this.envVars = Object.fromEntries(
+      Object.entries(Bun.env).filter(([, value]) => typeof value === 'string')
+    ) as Record<string, string>;
   }
 
   /**

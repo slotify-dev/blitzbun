@@ -15,6 +15,7 @@
     "build": "bunx tsc --build"
   },
   "dependencies": {
+    "@blitzbun/contracts": "workspace:*",
     "@blitzbun/core": "workspace:*",
     "jsonwebtoken": "^9.0.2",
     "rate-limiter-flexible": "^7.1.1",

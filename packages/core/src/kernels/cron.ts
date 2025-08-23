@@ -1,8 +1,11 @@
+import { ApplicationContract, AppRegistry, CronJob } from '@blitzbun/contracts';
+import { AppContext } from '@blitzbun/core';
 import cron, { ScheduledTask } from 'node-cron';
-import { AppKernel, AppRegistry, FileHelper } from '..';
-import { ApplicationContract, CronJob } from '../contracts';
+import { AppKernel, FileHelper } from '..';
 
-export default class CronKernel<TRegistry extends AppRegistry = AppRegistry> extends AppKernel<TRegistry> {
+export default class CronKernel<
+  TRegistry extends AppRegistry = AppRegistry,
+> extends AppKernel<TRegistry> {
   private isShuttingDown = false;
   private crons: ScheduledTask[] = [];
   private runningJobs = new Set<string>();
@@ -45,8 +48,13 @@ export default class CronKernel<TRegistry extends AppRegistry = AppRegistry> ext
       const cronDir = this.app.getRootPath('console/crons');
 
       await FileHelper.loadFiles(cronDir, (JobClass: unknown) => {
-        if (typeof JobClass === 'function' && JobClass.prototype instanceof CronJob) {
-          const jobInstance = new (JobClass as new (app: ApplicationContract<TRegistry>) => CronJob)(this.app);
+        if (
+          typeof JobClass === 'function' &&
+          JobClass.prototype instanceof CronJob
+        ) {
+          const jobInstance = new (JobClass as new (
+            app: ApplicationContract<TRegistry>
+          ) => CronJob)(this.app);
           const schedules = jobInstance
             .getSchedule()
             .split('|')
@@ -54,7 +62,9 @@ export default class CronKernel<TRegistry extends AppRegistry = AppRegistry> ext
 
           for (const schedule of schedules) {
             if (!cron.validate(schedule)) {
-              console.error(`Invalid cron schedule "${schedule}" for job ${jobInstance.constructor.name}`);
+              console.error(
+                `Invalid cron schedule "${schedule}" for job ${jobInstance.constructor.name}`
+              );
               continue;
             }
 
@@ -62,13 +72,18 @@ export default class CronKernel<TRegistry extends AppRegistry = AppRegistry> ext
               const jobName = jobInstance.constructor.name;
 
               if (this.runningJobs.has(jobName)) {
-                console.warn(`Skipping overlapping run of cron job: ${jobName}`);
+                console.warn(
+                  `Skipping overlapping run of cron job: ${jobName}`
+                );
                 return;
               }
 
               this.runningJobs.add(jobName);
               try {
-                await jobInstance.handle();
+                const scopedContainer = this.app.getContainer().clone();
+                await AppContext.run(scopedContainer, async () => {
+                  await jobInstance.handle();
+                });
               } catch (error) {
                 console.error(`Error executing cron job "${jobName}":`, error);
               } finally {

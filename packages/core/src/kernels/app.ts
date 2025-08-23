@@ -1,7 +1,12 @@
-import { AppKernelContract, ApplicationContract } from '../contracts';
-import { AppRegistry } from '../types';
+import {
+  AppKernelContract,
+  ApplicationContract,
+  AppRegistry,
+} from '@blitzbun/contracts';
 
-export default class AppKernel<TRegistry extends AppRegistry = AppRegistry> implements AppKernelContract {
+export default class AppKernel<TRegistry extends AppRegistry = AppRegistry>
+  implements AppKernelContract
+{
   constructor(protected readonly app: ApplicationContract<TRegistry>) {
     this.registerSignalHandlers();
     this.registerGlobalErrorHandlers();

@@ -1,47 +1,60 @@
-import winston from 'winston';
-import LoggerServiceContract from '../contracts/logger';
+import { LogData, LoggerContract } from '@blitzbun/contracts';
+import pino, { Logger } from 'pino';
 
-export default class LoggerService implements LoggerServiceContract {
-  private logger: winston.Logger;
+export default class LoggerService implements LoggerContract {
+  private logger: Logger;
 
   constructor(
-    context: string = 'app',
+    private context: string = 'app',
     private level = 'info'
   ) {
-    this.logger = winston.createLogger({
-      level: level,
-      transports: [new winston.transports.Console()],
-      format: winston.format.combine(
-        winston.format.label({ label: context }),
-        winston.format.timestamp(),
-        winston.format.printf(({ timestamp, level, message, label }) => {
-          return `[${timestamp}] [${level.toUpperCase()}] [${label}] ${message}`;
-        })
-      ),
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    const pinoLevel = isProduction ? 'error' : isDevelopment ? 'debug' : level;
+    this.logger = pino({
+      name: context,
+      level: pinoLevel,
+      timestamp: pino.stdTimeFunctions.isoTime,
+      formatters: {
+        level: (label) => {
+          return { level: label.toUpperCase() };
+        },
+      },
+      transport: isDevelopment
+        ? {
+            target: 'pino-pretty',
+            options: {
+              colorize: true,
+              ignore: 'pid,hostname',
+              translateTime: 'SYS:yyyy-mm-dd HH:MM:ss.l',
+            },
+          }
+        : undefined,
     });
-  }
-
-  info(message: string): void {
-    this.logger.info(message);
-  }
-
-  warn(message: string): void {
-    this.logger.warn(message);
-  }
-
-  error(message: string): void {
-    this.logger.error(message);
-  }
-
-  debug(message: string): void {
-    this.logger.debug(message);
   }
 
   setLevel(level: string): void {
     this.level = level;
+    this.logger.level = level;
   }
 
-  withContext(context: string): LoggerServiceContract {
+  withContext(context: string): LoggerContract {
     return new LoggerService(context, this.level);
+  }
+
+  info(message: string, data?: LogData): void {
+    this.logger.info({ context: this.context, ...data }, message);
+  }
+
+  warn(message: string, data?: LogData): void {
+    this.logger.warn({ context: this.context, ...data }, message);
+  }
+
+  error(message: string, data?: LogData): void {
+    this.logger.error({ context: this.context, ...data }, message);
+  }
+
+  debug(message: string, data?: LogData): void {
+    this.logger.debug({ context: this.context, ...data }, message);
   }
 }

@@ -1,11 +1,15 @@
+import type { AppRegistry } from '@blitzbun/contracts';
+
 import { BaseRepository } from '@blitzbun/core';
-import { HttpRequestContract } from '@blitzbun/http';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import [[ repository ]] from '../models/[[ repositorySlug ]]';
 
-import [[ repository ]]Model from "@modules/[[ module ]]/models/[[ repositorySlug ]]";
-import [[ repository ]]Transformer from "@modules/[[ module ]]/transformers/[[ repositorySlug ]]";
+export default class [[ repository ]]Repository<AR extends AppRegistry = AppRegistry> extends BaseRepository<typeof [[ repository ]], AR> {
+  protected table = [[ repository ]];
+  protected db: NodePgDatabase<AR['dbSchema']>;
 
-export default class [[ repository ]]Repository extends BaseRepository {
-  constructor(request: HttpRequestContract) {
-    super(request, [[ repository ]]Model, new [[ repository ]]Transformer(request));
+  constructor() {
+    super();
+    this.db = this.container.resolve('db') as NodePgDatabase<AR['dbSchema']>;
   }
 }

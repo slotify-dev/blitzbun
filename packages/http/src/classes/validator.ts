@@ -1,9 +1,13 @@
+import {
+  HttpRequestContract,
+  RouteData,
+  ValidationError,
+  ValidatorContract,
+} from '@blitzbun/contracts';
 import { FileHelper } from '@blitzbun/core';
-import path from 'path';
 import { z, ZodError, ZodIssue, ZodObject } from 'zod';
-import { HttpRequestContract } from '../contracts';
-import ValidatorContract from '../contracts/validator';
-import { RouteData, ValidationError } from '../types';
+
+import path from 'path';
 
 export default class Validator implements ValidatorContract {
   private errors: ValidationError[] = [];
@@ -20,7 +24,10 @@ export default class Validator implements ValidatorContract {
    * - "payment.file" => use current module, path "payment/file.ts"
    * - "app::payment.file" => module "app", path "payment/file.ts"
    */
-  private parseValidatorPath(): { moduleName: string; filePathParts: string[] } {
+  private parseValidatorPath(): {
+    moduleName: string;
+    filePathParts: string[];
+  } {
     if (this.path.includes('::')) {
       const [moduleName, filePath] = this.path.split('::');
       return { moduleName, filePathParts: filePath.split('.') };
@@ -38,7 +45,12 @@ export default class Validator implements ValidatorContract {
   private getValidatorFilePath(): string {
     const { moduleName, filePathParts } = this.parseValidatorPath();
     const fileName = filePathParts.pop()!; // guaranteed by split('.')
-    const dirPath = path.join(this.routeData.modulePath as string, moduleName, 'validators', ...filePathParts);
+    const dirPath = path.join(
+      this.routeData.modulePath as string,
+      moduleName,
+      'validators',
+      ...filePathParts
+    );
     return path.join(dirPath, `${fileName}.ts`);
   }
 
@@ -49,10 +61,15 @@ export default class Validator implements ValidatorContract {
     if (this.schema) return this.schema;
 
     const filePath = this.getValidatorFilePath();
-    const module: (req?: HttpRequestContract) => ZodObject<Record<string, z.ZodTypeAny>> = await FileHelper.getFileAsync(filePath);
+    const module: (
+      req?: HttpRequestContract
+    ) => ZodObject<Record<string, z.ZodTypeAny>> =
+      await FileHelper.getFileAsync(filePath);
 
     if (typeof module !== 'function') {
-      throw new Error(`Validator file must export a default function at: ${filePath}`);
+      throw new Error(
+        `Validator file must export a default function at: ${filePath}`
+      );
     }
 
     const schema = module(this.req);
@@ -65,9 +82,10 @@ export default class Validator implements ValidatorContract {
   }
 
   async fails(): Promise<boolean> {
+    const data = this.req.all<Record<string, unknown>>();
+
     const schema = await this.loadSchema();
-    const data = await this.req.json<Record<string, unknown>>().catch(() => ({}));
-    const result = schema.safeParse(data);
+    const result = await schema.safeParseAsync(data);
 
     if (!result.success && result.error instanceof ZodError) {
       this.errors = result.error.issues.map(

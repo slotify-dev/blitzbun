@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "name": "@blitzbun/contracts",
+  "description": "Router module for BlitzBun",
+  "keywords": [
+    "blitzbun",
+    "contracts",
+    "server",
+    "framework"
+  ],
+  "scripts": {
+    "test": "bun test",
+    "build": "bunx tsc --build"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ]
+}

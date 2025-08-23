@@ -1,9 +1,10 @@
 import chalk from 'chalk';
 import ora from 'ora';
 import path from 'path';
+import * as FileHelper from '../utils/file';
 
+import { ApplicationContract, ConsoleCommand } from '@blitzbun/contracts';
 import type { Argv } from 'yargs';
-import { ApplicationContract, ConsoleCommand, FileHelper } from '..';
 
 export default class DBSeedCommand extends ConsoleCommand {
   constructor(app: ApplicationContract) {
@@ -11,7 +12,12 @@ export default class DBSeedCommand extends ConsoleCommand {
   }
 
   define(yargs: Argv): Argv {
-    return yargs.command('db:seed', 'Run all database seed files located in /database/seeds', (yargs: Argv) => yargs, this.handle.bind(this));
+    return yargs.command(
+      'db:seed',
+      'Run all database seed files located in /database/seeds',
+      (yargs: Argv) => yargs,
+      this.handle.bind(this)
+    );
   }
 
   async handle(): Promise<void> {

@@ -1,4 +1,4 @@
-import { HttpRouteParam } from '../types';
+import { HttpRouteParam } from '@blitzbun/contracts';
 import Route from './route';
 
 export default class HttpRouteCollection {

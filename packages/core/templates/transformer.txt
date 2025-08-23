@@ -1,9 +1,10 @@
 import { BaseTransformer } from '@blitzbun/core';
+import { [[transformer]]Model } from '../models/[[transformerSlug]]';
 
-export default class [[ module ]]Transformer extends BaseTransformer {
-  async toArray(model: unknown): Promise<unknown> {
+export default class [[transformer]]Transformer extends BaseTransformer<[[transformer]]Model, Partial<[[transformer]]Model>> {
+  async toArray(model: [[transformer]]Model): Promise<Partial<[[transformer]]Model>> {
     return {
-      uuid: this.get(model, 'uuid'),
+      uuid: model.uuid,
     };
   }
 }

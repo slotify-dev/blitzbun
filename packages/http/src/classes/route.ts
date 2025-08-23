@@ -1,12 +1,20 @@
-import { HttpRouteContract } from '../contracts';
-import type { HttpMethod, HttpMiddleware, HttpRouteParam, RouteData } from '../types';
+import {
+  HttpMethod,
+  HttpMiddleware,
+  HttpRouteContract,
+  HttpRouteParam,
+  RouteData,
+} from '@blitzbun/contracts';
 
 export default class HttpRoute implements HttpRouteContract {
   constructor(public route: HttpRouteParam) {}
 
   getModule(): RouteData {
     return {
+      keys: this.route.keys,
+      meta: this.route.meta,
       module: this.route.module,
+      pattern: this.route.pattern,
       modulePath: this.route.modulePath,
     };
   }

@@ -1,4 +1,4 @@
-import { HttpRequestContract, HttpResponseContract } from '@blitzbun/http';
+import { HttpRequestContract, HttpResponseContract } from '@blitzbun/contracts';
 
 export default async function (
   req: HttpRequestContract,

@@ -1,11 +1,10 @@
 /* eslint-disable security/detect-object-injection */
+import { ConfigContract, ConfigStore, ConfigValue } from '@blitzbun/contracts';
 import get from 'lodash/get';
 import has from 'lodash/has';
 import merge from 'lodash/merge';
-import ConfigServiceContract from '../contracts/config';
-import { ConfigStore, ConfigValue } from '../types';
 
-export default class ConfigService implements ConfigServiceContract {
+export default class ConfigService implements ConfigContract {
   private config: ConfigStore;
 
   constructor() {
@@ -50,7 +49,11 @@ export default class ConfigService implements ConfigServiceContract {
     }
 
     const current = this.config[key];
-    if (typeof current === 'object' && !Array.isArray(current) && current !== null) {
+    if (
+      typeof current === 'object' &&
+      !Array.isArray(current) &&
+      current !== null
+    ) {
       this.config[key] = merge({}, current, value);
     }
 

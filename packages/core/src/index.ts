@@ -1,8 +1,10 @@
-export * from './contracts';
+export * from './classes';
 export * from './kernels';
-export * from './types';
+export * from './repository';
 export * from './utils';
 
-export { default as Application } from './application';
-export { default as AppContainer } from './container';
-export { default as AppProvider } from './provider';
+export {
+  Notification,
+  default as NotificationService,
+  NotificationType,
+} from './lib/notification';

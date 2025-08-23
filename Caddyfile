@@ -1,4 +1,0 @@
-localhost {
-    tls internal
-    reverse_proxy blog:8000
-}

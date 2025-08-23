@@ -1,8 +1,10 @@
 import lodash from 'lodash';
 import path from 'path';
 
+import { ConsoleCommand } from '@blitzbun/contracts';
 import type { Argv } from 'yargs';
-import { ConsoleCommand, FileHelper } from '..';
+import { toPascalCase } from '../utils/common';
+import * as FileHelper from '../utils/file';
 
 interface HandlerArgv {
   module: string;
@@ -35,22 +37,26 @@ export default class CreateMiddlewareCommand extends ConsoleCommand {
     if (module) {
       lodash.templateSettings.interpolate = /\[\[([\s\S]+?)\]\]/g;
 
+      const middlewareName = toPascalCase(middleware);
       const modulePath = this.app.getModulePath(module);
-      const templatePath = path.join(__dirname, '../../templates');
-
-      const middlewareName = (middleware + '').replace(/^([a-z])|\s+([a-z])/g, ($1) => $1.toUpperCase());
       const targetDir = path.join(modulePath, 'middlewares');
+      const templatePath = path.join(__dirname, '../../templates');
 
       FileHelper.createDir(targetDir);
 
-      const targetFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'middleware.txt')))({
+      const targetFile = lodash.template(
+        await FileHelper.getFileAsync(path.join(templatePath, 'middleware.txt'))
+      )({
         module,
         middleware: middlewareName,
         middlewareSlug: middleware,
         moduleSlug: module,
       });
 
-      FileHelper.createFile(path.join(targetDir, `${middleware}.ts`), targetFile);
+      FileHelper.createFile(
+        path.join(targetDir, `${middleware}.ts`),
+        targetFile
+      );
     }
   }
 }

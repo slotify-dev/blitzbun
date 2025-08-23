@@ -1,4 +1,4 @@
-import { HttpMiddleware, HttpRouterGroupOptions } from '../types';
+import { HttpMiddleware, HttpRouterGroupOptions } from '@blitzbun/contracts';
 
 export default class HttpRouterContext {
   prefix = '';

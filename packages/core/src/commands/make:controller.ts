@@ -1,8 +1,10 @@
 import lodash from 'lodash';
 import path from 'path';
 
+import { ConsoleCommand } from '@blitzbun/contracts';
 import type { Argv } from 'yargs';
-import { ConsoleCommand, FileHelper } from '..';
+import { toPascalCase } from '../utils/common';
+import * as FileHelper from '../utils/file';
 
 interface HandlerArgv {
   module: string;
@@ -36,21 +38,26 @@ export default class CreateControllerCommand extends ConsoleCommand {
     if (module) {
       lodash.templateSettings.interpolate = /\[\[([\s\S]+?)\]\]/g;
 
+      const controllerName = toPascalCase(controller);
       const modulePath = this.app.getModulePath(module);
       const templatePath = path.join(__dirname, '../../templates');
-      const controllerName = (controller + '').replace(/^([a-z])|\s+([a-z])/g, ($1) => $1.toUpperCase());
 
       const targetDir = path.join(modulePath, 'controllers');
       FileHelper.createDir(targetDir);
 
-      const targetFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'controller.txt')))({
+      const targetFile = lodash.template(
+        await FileHelper.getFileAsync(path.join(templatePath, 'controller.txt'))
+      )({
         module,
         moduleSlug: module,
         controllerSlug: controller,
         controller: controllerName,
       });
 
-      FileHelper.createFile(path.join(targetDir, `${controller}.ts`), targetFile);
+      FileHelper.createFile(
+        path.join(targetDir, `${controller}.ts`),
+        targetFile
+      );
     }
   }
 }

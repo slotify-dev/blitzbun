@@ -21,7 +21,10 @@ export function directoryExists(dirPath: string): boolean {
   }
 }
 
-export async function createFile(filePath: string, content: string): Promise<void> {
+export async function createFile(
+  filePath: string,
+  content: string
+): Promise<void> {
   if (!fileExists(filePath)) {
     await write(filePath, content);
   }
@@ -43,7 +46,10 @@ export async function getDirFilesAsync(dirPath: string): Promise<string[]> {
   return await readdir(dirPath);
 }
 
-export async function getFileAsync<T = unknown>(filePath: string, defaultVal: T = null as T): Promise<T> {
+export async function getFileAsync<T = unknown>(
+  filePath: string,
+  defaultVal: T = null as T
+): Promise<T> {
   try {
     const module = await import(filePath);
     return (module.default ?? module) as T;
@@ -53,12 +59,18 @@ export async function getFileAsync<T = unknown>(filePath: string, defaultVal: T 
   }
 }
 
-export async function loadFiles(basePath: string, callback: (fileData: unknown, fileName: string) => void | Promise<void>): Promise<void> {
+export async function loadFiles(
+  basePath: string,
+  callback: (fileData: unknown, fileName: string) => void | Promise<void>
+): Promise<void> {
   try {
     if (directoryExists(basePath)) {
       const files = await readdir(basePath);
       for (const file of files) {
-        await callback(await getFileAsync(path.join(basePath, file), {}), file.replace(/\.(ts|js)$/, ''));
+        await callback(
+          await getFileAsync(path.join(basePath, file), {}),
+          file.replace(/\.(ts|js)$/, '')
+        );
       }
     }
   } catch (error) {

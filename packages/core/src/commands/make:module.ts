@@ -1,8 +1,10 @@
 import lodash from 'lodash';
 import path from 'path';
 
+import { ConsoleCommand } from '@blitzbun/contracts';
 import type { Argv } from 'yargs';
-import { ConsoleCommand, FileHelper } from '..';
+import { toPascalCase } from '../utils/common';
+import * as FileHelper from '../utils/file';
 
 interface HandlerArgv {
   module: string;
@@ -29,9 +31,9 @@ export default class CreateModuleCommand extends ConsoleCommand {
     if (module) {
       lodash.templateSettings.interpolate = /\[\[([\s\S]+?)\]\]/g;
 
+      const moduleName = toPascalCase(module);
       const modulePath = this.app.getModulePath(module);
       const templatePath = path.join(__dirname, '../../templates');
-      const moduleName = (module + '').replace(/^([a-z])|\s+([a-z])/g, ($1) => $1.toUpperCase());
 
       const modelPath = path.join(modulePath, 'models');
       const repositoryPath = path.join(modulePath, 'repository');
@@ -46,49 +48,75 @@ export default class CreateModuleCommand extends ConsoleCommand {
       FileHelper.createDir(controllerPath);
       FileHelper.createDir(transformerPath);
 
-      const controllerFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'controller.txt')))({
+      const controllerFile = lodash.template(
+        await FileHelper.getFileAsync(path.join(templatePath, 'controller.txt'))
+      )({
         module: moduleName,
         controller: moduleName,
         controllerSlug: module,
         moduleSlug: module,
       });
 
-      const middlewareFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'middleware.txt')))({
+      const middlewareFile = lodash.template(
+        await FileHelper.getFileAsync(path.join(templatePath, 'middleware.txt'))
+      )({
         module: moduleName,
         middleware: moduleName,
         middlewareSlug: module,
         moduleSlug: module,
       });
 
-      const modelFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'model.txt')))({
+      const modelFile = lodash.template(
+        await FileHelper.getFileAsync(path.join(templatePath, 'model.txt'))
+      )({
         module: moduleName,
         model: moduleName,
         modelSlug: module,
         moduleSlug: module,
       });
 
-      const repositoryFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'repository.txt')))({
+      const repositoryFile = lodash.template(
+        await FileHelper.getFileAsync(path.join(templatePath, 'repository.txt'))
+      )({
         module,
         repository: moduleName,
         repositorySlug: module,
         moduleSlug: module,
       });
 
-      const transformerFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'transformer.txt')))({
+      const transformerFile = lodash.template(
+        await FileHelper.getFileAsync(
+          path.join(templatePath, 'transformer.txt')
+        )
+      )({
         module: moduleName,
         moduleSlug: module,
         transformer: moduleName,
         transformerSlug: module,
       });
 
-      const providerFile = lodash.template(await FileHelper.getFileAsync(path.join(templatePath, 'provider.txt')))({ module: moduleName, moduleSlug: module });
+      const providerFile = lodash.template(
+        await FileHelper.getFileAsync(path.join(templatePath, 'provider.txt'))
+      )({ module: moduleName, moduleSlug: module });
 
       FileHelper.createFile(path.join(modulePath, 'index.ts'), providerFile);
       FileHelper.createFile(path.join(modelPath, `${module}.ts`), modelFile);
-      FileHelper.createFile(path.join(middlewarePath, `${module}.ts`), middlewareFile);
-      FileHelper.createFile(path.join(controllerPath, `${module}.ts`), controllerFile);
-      FileHelper.createFile(path.join(transformerPath, `${module}.ts`), transformerFile);
-      FileHelper.createFile(path.join(repositoryPath, `${module}.ts`), repositoryFile);
+      FileHelper.createFile(
+        path.join(middlewarePath, `${module}.ts`),
+        middlewareFile
+      );
+      FileHelper.createFile(
+        path.join(controllerPath, `${module}.ts`),
+        controllerFile
+      );
+      FileHelper.createFile(
+        path.join(transformerPath, `${module}.ts`),
+        transformerFile
+      );
+      FileHelper.createFile(
+        path.join(repositoryPath, `${module}.ts`),
+        repositoryFile
+      );
     }
   }
 }

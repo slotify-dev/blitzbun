@@ -4,7 +4,7 @@
     "node_modules"
   ],
   "include": [
-    "src",
+    "src"
     // "database/**/*",
     // "drizzle.config.ts",
   ],
@@ -15,6 +15,7 @@
     "lib": [
       "ESNext"
     ],
+    "composite": false,
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
@@ -40,15 +41,15 @@
       ],
       "@modules/*": [
         "src/modules/*"
-      ],
+      ]
     }
   },
   "references": [
     {
-      "path": "packages/core"
+      "path": "packages/contracts"
     },
     {
-      "path": "packages/cache"
+      "path": "packages/core"
     },
     {
       "path": "packages/http"

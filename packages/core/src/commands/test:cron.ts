@@ -1,7 +1,13 @@
 import path from 'path';
 
+import {
+  AppRegistry,
+  ApplicationContract,
+  ConsoleCommand,
+  CronJob,
+} from '@blitzbun/contracts';
 import type { Argv } from 'yargs';
-import { ApplicationContract, AppRegistry, ConsoleCommand, CronJob, FileHelper } from '..';
+import * as FileHelper from '../utils/file';
 
 interface HandlerArgv {
   job: string;
@@ -48,8 +54,13 @@ export default class TestCronJob extends ConsoleCommand {
     }
 
     const JobClass = await FileHelper.getFileAsync(path.join(cronDir, job));
-    if (typeof JobClass === 'function' && JobClass.prototype instanceof CronJob) {
-      const jobInstance = new (JobClass as new (app: ApplicationContract<AppRegistry>) => CronJob)(this.app);
+    if (
+      typeof JobClass === 'function' &&
+      JobClass.prototype instanceof CronJob
+    ) {
+      const jobInstance = new (JobClass as new (
+        app: ApplicationContract<AppRegistry>
+      ) => CronJob)(this.app);
       await jobInstance.handle();
     }
   }

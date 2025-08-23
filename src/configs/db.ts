@@ -1,6 +1,7 @@
-import { EnvServiceContract } from '@blitzbun/core';
+import { EnvContract } from '@blitzbun/contracts';
 
-export default (envService: EnvServiceContract) => ({
+export default (envService: EnvContract) => ({
+  client: 'pg',
   pg: {
     port: envService.get('POSTGRES_PORT'),
     user: envService.get('POSTGRES_USER'),

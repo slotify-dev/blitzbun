@@ -5,7 +5,10 @@ export default defineConfig({
   dialect: 'postgresql',
   out: './database/migrations',
   extensionsFilters: ['postgis'],
-  schema: [path.join(__dirname, 'src/modules/**/models/*.ts'), path.join(__dirname, 'packages/**/src/models/*.ts')],
+  schema: [
+    path.join(__dirname, 'src/modules/**/models/*.ts'),
+    path.join(__dirname, 'packages/**/src/models/*.ts'),
+  ],
   dbCredentials: {
     ssl: false,
     port: Number(process.env['POSTGRES_PORT']),

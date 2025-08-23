@@ -1,13 +1,13 @@
-import { ConsoleCommand } from '@blitzbun/core';
+import { ConsoleCommand } from '@blitzbun/contracts';
 import type { Argv } from 'yargs';
 
 export default class [[ command ]]Command extends ConsoleCommand {
   define(yargs: Argv): Argv {
     return yargs.command(
-      'command:[[ commandSlug ]]',
+      '[[ commandSlug ]]',
       'Sample command description',
-      () => {},
-      this.handle
+      (yargs: Argv) => yargs,
+      this.handle.bind(this)
     );
   }
 

@@ -1,10 +1,18 @@
 /* eslint-disable security/detect-object-injection */
+import {
+  AppRegistry,
+  ApplicationContract,
+  BaseQueueJob,
+} from '@blitzbun/contracts';
+import { AppContext } from '@blitzbun/core';
 import { Job, Worker } from 'bullmq';
 import Redis, { RedisOptions } from 'ioredis';
-import { ApplicationContract, AppRegistry, BaseQueueJob, FileHelper } from '..';
+import { FileHelper } from '..';
 import AppKernel from './app';
 
-export default class WorkerKernel<TRegistry extends AppRegistry> extends AppKernel<TRegistry> {
+export default class WorkerKernel<
+  TRegistry extends AppRegistry,
+> extends AppKernel<TRegistry> {
   private workers: Worker[] = [];
 
   private async shutdown(): Promise<void> {
@@ -20,7 +28,9 @@ export default class WorkerKernel<TRegistry extends AppRegistry> extends AppKern
 
     const logger = this.app.get('logger');
     const jobsPath = this.app.getRootPath('console/jobs');
-    const config = this.app.get('config').get('cache.stores.queue') as RedisOptions;
+    const config = this.app
+      .get('config')
+      .get('cache.stores.queue') as RedisOptions;
 
     if (!config?.host || !config?.port) {
       logger?.error('❌ Invalid Redis configuration');
@@ -37,8 +47,14 @@ export default class WorkerKernel<TRegistry extends AppRegistry> extends AppKern
     const jobMap: Record<string, BaseQueueJob[]> = {};
 
     await FileHelper.loadFiles(jobsPath, (JobClass: unknown) => {
-      if (typeof JobClass === 'function' && typeof JobClass.prototype.getName === 'function' && typeof JobClass.prototype.handle === 'function') {
-        const job = new (JobClass as new (app: ApplicationContract<TRegistry>) => BaseQueueJob)(this.app);
+      if (
+        typeof JobClass === 'function' &&
+        typeof JobClass.prototype.getName === 'function' &&
+        typeof JobClass.prototype.handle === 'function'
+      ) {
+        const job = new (JobClass as new (
+          app: ApplicationContract<TRegistry>
+        ) => BaseQueueJob)(this.app);
 
         const [queue, jobName] = job.getName().split(':');
         if (!queue || !jobName) {
@@ -54,12 +70,18 @@ export default class WorkerKernel<TRegistry extends AppRegistry> extends AppKern
       const worker = new Worker(
         queue,
         async (job: Job) => {
-          const handler = jobs.find((j) => j.getName() === `${queue}:${job.name}`);
+          const handler = jobs.find(
+            (j) => j.getName() === `${queue}:${job.name}`
+          );
           if (!handler) {
             logger?.error(`❌ No handler found for job: ${job.name}`);
             return;
           }
-          await handler.handle(job);
+
+          const scopedContainer = this.app.getContainer().clone();
+          await AppContext.run(scopedContainer, async () => {
+            await handler.handle(job);
+          });
         },
         { connection: redis }
       );
