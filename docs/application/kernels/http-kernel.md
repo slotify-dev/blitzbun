@@ -355,7 +355,7 @@ Solution: Change the port in your configuration or stop the conflicting process.
 
 ## Next Steps
 
-- [Routing](../http/routing.md) - Learn how to define routes for the HTTP Kernel
-- [Controllers](../http/controllers.md) - Organize your request handlers
-- [Middleware](../http/middleware.md) - Add processing logic to requests
-- [Request & Response](../http/request-response.md) - Work with HTTP data
+- [Routing](../../http/routing.md) - Learn how to define routes for the HTTP Kernel
+- [Controllers](../../http/controllers.md) - Organize your request handlers
+- [Middleware](../../http/middleware.md) - Add processing logic to requests
+- [Request & Response](../../http/request-response.md) - Work with HTTP data

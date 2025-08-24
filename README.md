@@ -65,9 +65,9 @@ Explore the comprehensive documentation to learn about BlitzBun's concepts and f
 
 ### Framework Concepts
 
-- [📱 Application](./docs/application.md) - The heart of your BlitzBun application
-- [⚙️ Kernels](./docs/kernels.md) - HTTP, Console, Worker, and Cron kernels
-- [📦 Container & Dependency Injection](./docs/container.md) - Service container and DI system
+- [📱 Application](./docs/application/application.md) - The heart of your BlitzBun application
+- [⚙️ Kernels](./docs/application/kernels.md) - HTTP, Console, Worker, and Cron kernels
+- [📦 Container & Dependency Injection](./docs/application/container.md) - Service container and DI system
 
 ### HTTP Package
 
@@ -80,17 +80,17 @@ Explore the comprehensive documentation to learn about BlitzBun's concepts and f
 
 ### Database & Storage
 
-- [💾 Database](./docs/database.md) - Database connections and queries
-- [🗃️ Models & ORM](./docs/models.md) - Data modeling and relationships
+- [💾 Database](./docs/database/database.md) - Database connections and queries
+- [🗃️ Models & ORM](./docs/database/models.md) - Data modeling and relationships
 - [📋 Migrations](./docs/migrations.md) - Database schema management
-- [⚡ Caching](./docs/caching.md) - High-performance caching system
+- [⚡ Caching](./docs/application/caching.md) - High-performance caching system
 
 ### Advanced Features
 
-- [🔌 WebSocket](./docs/websocket.md) - Real-time communication
-- [📋 Commands](./docs/commands.md) - CLI command system
-- [👷 Workers & Queues](./docs/workers.md) - Background job processing
-- [⏰ Cron Jobs](./docs/cron.md) - Scheduled task execution
+- [🔌 WebSocket](./docs/http/websocket.md) - Real-time communication
+- [📋 Commands](./docs/application/command.md) - CLI command system
+- [👷 Workers & Queues](./docs/application/job.md) - Background job processing
+- [⏰ Cron Jobs](./docs/application/kernels/cron-kernel.md) - Scheduled task execution
 
 ### Development & Deployment
 

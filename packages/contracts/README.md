@@ -62,15 +62,15 @@ export class MyController {
 
 For detailed usage examples and framework concepts, see the [BlitzBun Documentation](../../docs/):
 
-- [Application](../../docs/application.md) - Application container and lifecycle
+- [Application](../../docs/application/application.md) - Application container and lifecycle
 - [HTTP Package](../../docs/http/overview.md) - HTTP request handling
 - [Routing](../../docs/http/routing.md) - URL routing system
 - [Controllers](../../docs/http/controllers.md) - Request controllers
-- [Validation](../../docs/http/validator.md) - Input validation
-- [Database](../../docs/database.md) - Database operations
-- [Caching](../../docs/caching.md) - Caching system
-- [Commands](../../docs/commands.md) - CLI commands
-- [WebSocket](../../docs/websocket.md) - Real-time communication
+- [Validation](../../docs/http/validation.md) - Input validation
+- [Database](../../docs/database/database.md) - Database operations
+- [Caching](../../docs/application/caching.md) - Caching system
+- [Commands](../../docs/application/command.md) - CLI commands
+- [WebSocket](../../docs/http/websocket.md) - Real-time communication
 
 ## Contributing
 

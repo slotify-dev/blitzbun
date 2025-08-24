@@ -14,11 +14,24 @@ This creates `modules/users/repository/user.ts`:
 
 ```typescript
 import { UserModel } from '../models/user.js';
-import { BaseRepository } from '@blitzbun/core';
+import type { AppRegistry } from '@blitzbun/contracts';
+import { AppContext, BasePgRepository } from '@blitzbun/core';
 
-export class UserRepository extends BaseRepository<typeof UserModel> {
+export default class UsersRepository<
+  AR extends AppRegistry = AppRegistry,
+> extends BasePgRepository<typeof Users, AR> {
+  protected table = Users;
+
   constructor() {
-    super(UserModel);
+    super(AppContext.get<AR>());
+  }
+
+  async findByPhone(phone: string): Promise<UsersModel | null> {
+    return await this.findBy('phone', phone);
+  }
+
+  async getByUuid(uuid: string): Promise<UsersModel | null> {
+    return await this.findBy('uuid', uuid);
   }
 }
 ```
@@ -44,7 +57,7 @@ const users = await userRepository.findWhere({ active: true });
 const newUser = await userRepository.create({
   name: 'John Doe',
   email: 'john@example.com',
-  active: true
+  active: true,
 });
 ```
 
@@ -74,7 +87,7 @@ await userRepository.deleteWhere({ active: false });
 const result = await userRepository.paginate({
   page: 1,
   limit: 10,
-  where: { active: true }
+  where: { active: true },
 });
 
 console.log(result.data); // Array of users
@@ -85,7 +98,9 @@ console.log(result.meta); // Pagination metadata
 
 ```typescript
 // Find by JSON field
-const users = await userRepository.findByJsonb('preferences', { theme: 'dark' });
+const users = await userRepository.findByJsonb('preferences', {
+  theme: 'dark',
+});
 
 // Update JSON field
 await userRepository.updateJsonb(1, 'preferences', { theme: 'light' });
@@ -97,29 +112,13 @@ Repositories include built-in caching:
 
 ```typescript
 // Cache result for 1 hour
-const user = await userRepository.catch('user-1', () => 
-  userRepository.find(1)
-, 3600);
+const user = await userRepository.catch(
+  'user-1',
+  () => userRepository.find(1),
+  3600
+);
 
 // Clear cache
 await userRepository.flush('user-1');
 await userRepository.flushAll(); // Clear all cache
-```
-
-## Controller Integration
-
-```typescript
-export class UserController extends BaseController {
-  private userRepository = new UserRepository();
-
-  async index(request: HttpRequest, response: HttpResponse) {
-    const users = await this.userRepository.findWhere({ active: true });
-    return response.json(users);
-  }
-
-  async show(request: HttpRequest, response: HttpResponse) {
-    const user = await this.userRepository.find(request.param('id'));
-    return response.json(user);
-  }
-}
 ```

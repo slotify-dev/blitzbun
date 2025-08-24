@@ -21,7 +21,9 @@ All service providers extend the `AppProvider` class from `@blitzbun/core`:
 import { AppProvider } from '@blitzbun/core';
 import { ApplicationContract, AppRegistry } from '@blitzbun/contracts';
 
-export default class MyServiceProvider<T extends AppRegistry> extends AppProvider<T> {
+export default class MyServiceProvider<
+  T extends AppRegistry,
+> extends AppProvider<T> {
   /**
    * Register services into the container.
    * This method is required and called during application initialization.
@@ -71,7 +73,7 @@ The `register` method is called immediately when the provider is registered with
 register(app: ApplicationContract<T>): void {
   const myService = new MyService();
   app.use('myService', myService);
-  
+
   // Register cleanup callback
   app.onCleanup(async () => {
     await myService.close();
@@ -92,7 +94,7 @@ async boot(app: ApplicationContract<T>): Promise<void> {
   const config = app.get('config');
   const logger = app.get('logger');
   const myService = app.get('myService');
-  
+
   await myService.connect(config.get('myservice.url'));
   logger.info('MyService connected successfully');
 }
@@ -153,93 +155,6 @@ export interface AppRegistry<T extends WsSessionData = WsSessionData> {
 }
 ```
 
-## Real Examples from BlitzBun Core
-
-### Cache Service Provider
-
-```typescript
-import { ApplicationContract, AppRegistry } from '@blitzbun/contracts';
-import AppProvider from '../../classes/provider';
-import CacheManager from './manager';
-
-export default class CacheServiceProvider<T extends AppRegistry> extends AppProvider<T> {
-  register(app: ApplicationContract<T>): void {
-    const config = app.get('config');
-    const cache = new CacheManager(config);
-
-    app.use('cache', cache);
-    app.onCleanup(async () => {
-      await cache.destroy();
-    });
-  }
-}
-```
-
-### Database Service Provider
-
-```typescript
-import { ApplicationContract, AppRegistry, DBClient, DBConfig } from '@blitzbun/contracts';
-import AppProvider from '../../classes/provider';
-import DatabaseFactory from './factory';
-
-export default class DatabaseServiceProvider<T extends AppRegistry> extends AppProvider<T> {
-  async register(app: ApplicationContract<T>): Promise<void> {
-    const schema: DBSchema = await loadSchemasFromModules(app);
-    const configService = app.get('config');
-    const factory = new DatabaseFactory(schema);
-
-    const actualClient = configService.get('db.client') as DBClient;
-    const dbConfig = configService.get(`db.${actualClient}`);
-
-    const drizzleClient = await factory.get(actualClient, dbConfig);
-
-    app.use('dbSchema', schema);
-    app.use('db', drizzleClient);
-
-    app.onCleanup(async () => {
-      await factory.destroy();
-    });
-  }
-}
-```
-
-### Modular App Provider
-
-The `ModularAppProvider` demonstrates how to dynamically load module-specific providers:
-
-```typescript
-export default class ModularAppProvider<T extends AppRegistry> extends AppProvider<T> {
-  private async loadModules(app: ApplicationContract<T>): Promise<void> {
-    const modulesDir = app.getModulePath();
-    if (!FileHelper.directoryExists(modulesDir)) {
-      return;
-    }
-
-    const moduleNames = await FileHelper.getDirFilesAsync(modulesDir);
-    for (const moduleName of moduleNames) {
-      const modulePath = path.join(modulesDir, moduleName);
-      
-      const ModuleProvider = await FileHelper.getFileAsync(
-        modulePath,
-        class DefaultProvider extends AppProvider<T> {}
-      );
-
-      if (ModuleProvider && ModuleProvider.prototype instanceof AppProvider) {
-        const instance = new ModuleProvider();
-        app.registerProvider(instance);
-      }
-    }
-  }
-
-  async boot(app: ApplicationContract<T>): Promise<void> {
-    await this.loadModules(app);
-    if (app.has('logger')) {
-      app.get('logger').setLevel(app.get('config').get('app.log.level', 'info'));
-    }
-  }
-}
-```
-
 ## Provider Registration
 
 ### Core Providers
@@ -268,10 +183,7 @@ const app = new Application();
 app.registerProvider(new MyServiceProvider());
 
 // Register multiple providers
-app.registerProviders([
-  new MyServiceProvider(),
-  new AnotherServiceProvider(),
-]);
+app.registerProviders([new MyServiceProvider(), new AnotherServiceProvider()]);
 
 // Boot the application
 await app.boot();
@@ -281,7 +193,7 @@ await app.boot();
 
 For modular applications, place a provider in your module directory:
 
-```
+```bash
 modules/
   my-module/
     provider.ts    # Default provider file

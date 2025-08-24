@@ -24,7 +24,7 @@ The HTTP package provides:
 
 The HTTP package includes several key components:
 
-### [HTTP Server](../kernels/http-kernel.md)
+### [HTTP Server](../application/kernels/http-kernel.md)
 
 - High-performance server powered by Bun's native HTTP implementation
 - Graceful shutdown handling with proper resource cleanup
@@ -312,7 +312,7 @@ Explore the detailed documentation for each HTTP package component:
 
 Start with the core concepts and gradually explore advanced features:
 
-1. **Start Here**: [HTTP Kernel](../kernels/http-kernel.md) - Set up your web server
+1. **Start Here**: [HTTP Kernel](../application/kernels/http-kernel.md) - Set up your web server
 2. **Learn Routing**: [Routing](./routing.md) - Define your application routes
 3. **Organize Code**: [Controllers](./controllers.md) - Structure your request handlers
 4. **Handle Data**: [Request & Response](./request-response.md) - Work with HTTP data
@@ -321,6 +321,6 @@ Start with the core concepts and gradually explore advanced features:
 
 For related concepts, see:
 
-- [Application](../application.md) - Understanding the application foundation
-- [Container & Dependency Injection](../container.md) - Service management
-- [Kernels Overview](../kernels.md) - Different application modes
+- [Application](../application/application.md) - Understanding the application foundation
+- [Container & Dependency Injection](../application/container.md) - Service management
+- [Kernels Overview](../application/kernels.md) - Different application modes

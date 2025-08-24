@@ -155,62 +155,11 @@ export class UserController {
 }
 ```
 
-## Core Benefits
-
-### 1. Testability
-
-```typescript
-// Easy to test with mock services
-describe('UserController', () => {
-  test('creates user successfully', async () => {
-    const mockApp = {
-      get: jest.fn().mockImplementation((service) => {
-        switch (service) {
-          case 'userService':
-            return mockUserService;
-          case 'emailService':
-            return mockEmailService;
-          case 'logger':
-            return mockLogger;
-        }
-      }),
-    };
-
-    const controller = new UserController(mockApp);
-    // Test with mocked dependencies
-  });
-});
-```
-
-### 2. Flexibility
-
-```typescript
-// Easy to swap implementations
-if (env.get('NODE_ENV') === 'test') {
-  app.use('emailService', new MockEmailService());
-} else {
-  app.use('emailService', new SmtpEmailService());
-}
-```
-
-### 3. Configuration-Driven
-
-```typescript
-// Different services based on configuration
-const config = app.get('config');
-
-if (config.get('cache.driver') === 'redis') {
-  app.use('cache', new RedisCache());
-} else {
-  app.use('cache', new MemoryCache());
-}
-```
-
 ## Architecture Overview
 
 The container follows a layered architecture:
 
-```
+```bash
 Application
     ↓
 Service Providers
