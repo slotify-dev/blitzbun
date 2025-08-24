@@ -10,7 +10,7 @@ BlitzBun is a high-performance web framework that brings the elegant syntax and 
 
 ![Work in Progress](https://img.shields.io/badge/status-work%20in%20progress-orange)
 ![License](https://img.shields.io/badge/license-MIT-blue)
-![Version](https://img.shields.io/badge/version-0.1.0--alpha-lightgrey)
+![Version](https://img.shields.io/npm/v/%40blitzbun%2Fframework)
 
 A high-performance, bun-based framework for building lightning-fast applications.
 
@@ -46,71 +46,15 @@ This project is currently under active development and is not yet ready for prod
 - Node.js (for certain development tools)
 - PostgreSQL or SQLite (for database features)
 
-### Your First Application
+### How to install
 
-```typescript
-import { Application } from '@blitzbun/core';
-import { HttpKernel } from '@blitzbun/http';
-
-const app = new Application(__dirname);
-const kernel = new HttpKernel(app);
-
-// Your app is ready!
-await kernel.handle();
+```bash
+bun add @blitzbun/framework
 ```
 
 ## Documentation
 
 Explore the comprehensive documentation organized by package:
-
-### 📦 Package Documentation
-
-#### [@blitzbun/http](./packages/http/README.md) - HTTP Server & Web Framework
-- [🌐 Overview](./packages/http/docs/overview.md) - Complete HTTP package guide
-- [🛣️ Routing](./packages/http/docs/routing.md) - URL routing and parameter handling
-- [🎮 Controllers](./packages/http/docs/controllers.md) - Organized request handling
-- [📥 Request & Response](./packages/http/docs/request-response.md) - HTTP data management
-- [🛡️ Middleware](./packages/http/docs/middleware.md) - Request/response processing
-- [✅ Validation](./packages/http/docs/validation.md) - Input validation system
-- [🔌 WebSocket](./packages/http/docs/websocket.md) - Real-time communication
-- [🔄 Transformer](./packages/http/docs/transformer.md) - Data transformation
-
-#### [@blitzbun/core](./packages/core/README.md) - Framework Foundation
-Core application features, dependency injection, and essential services. See the [complete core documentation](./packages/core/README.md) for all available features.
-
-#### [@blitzbun/contracts](./packages/contracts/README.md) - TypeScript Interfaces
-TypeScript contracts and interfaces ensuring consistency across all BlitzBun packages.
-
-## Architecture Overview
-
-BlitzBun follows a modular architecture inspired by Laravel:
-
-```bash
-BlitzBun Application
-├── Application Container (IoC)
-├── Service Providers
-├── Kernels (HTTP/Console/Worker)
-├── Routing System
-├── Middleware Stack
-├── Controllers & Models
-└── Database Layer
-```
-
-## Publishing Packages to NPM
-
-```bash
-# build local scripts first
-bun run build:scripts
-
-# version checks
-bun run version:check
-
-# dry run before publishing pacakges
-bun run publish:dry-run
-
-# publish packages to npm
-bun run publish:packages
-```
 
 ## Contributing
 
