@@ -49,7 +49,17 @@ This project is currently under active development and is not yet ready for prod
 ### How to install
 
 ```bash
-bun add @blitzbun/framework
+# install using npm
+npm install -g @blitzbun/create-blitzbun
+
+# install using yarn
+yarn global add @blitzbun/create-blitzbun
+
+# install using pnpm
+pnpm add -g @blitzbun/create-blitzbun
+
+# install using bun
+bun add -g @blitzbun/create-blitzbun
 ```
 
 ## Documentation
