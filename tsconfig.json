@@ -1,6 +1,6 @@
 {
   "files": [],
-  "include": ["scripts"],
+  "include": ["scripts/**/*"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
@@ -26,11 +26,7 @@
     // some stricter flags
     "noUnusedLocals": true,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": true,
-    "paths": {
-      "@database/*": ["database/*"],
-      "@modules/*": ["src/modules/*"]
-    }
+    "noPropertyAccessFromIndexSignature": true
   },
   "references": [
     {

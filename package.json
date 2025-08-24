@@ -1,16 +1,29 @@
 {
+  "type": "module",
   "name": "blitzbun",
   "version": "1.0.0",
+  "description": "A modern, fast, and secure web framework built with Bun.",
   "author": {
     "name": "Sagar Patel",
     "email": "sandip254@gmail.com"
   },
+  "keywords": [
+    "bun",
+    "web",
+    "fast",
+    "secure",
+    "modern",
+    "framework",
+    "typescript",
+    "javascript"
+  ],
   "devDependencies": {
     "@eslint/js": "^9.34.0",
     "@types/aws-sdk": "^2.7.4",
     "@types/bun": "latest",
     "@types/lodash": "^4.17.20",
     "@types/moment": "^2.13.0",
+    "@types/semver": "^7.7.0",
     "@types/stripe": "^8.0.417",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
@@ -23,33 +36,28 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.5",
     "prettier": "3.6.2",
+    "semver": "^7.7.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.40.0"
-  },
-  "description": "A modern, fast, and secure web framework built with Bun.",
-  "keywords": [
-    "bun",
-    "web",
-    "fast",
-    "secure",
-    "modern",
-    "framework",
-    "typescript",
-    "javascript"
-  ],
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
   },
   "scripts": {
     "prepare": "husky",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "prepublish": "bun run build:scripts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "test": "bun run --filter='@blitzbun/*' test"
+    "test": "bun run --filter='@blitzbun/*' test",
+    "publish:packages": "bun run dist/publish.js",
+    "version:check": "bun run dist/version-check.js",
+    "version:update": "bun run dist/version-update.js",
+    "publish:dry-run": "bun run dist/publish.js --dry-run",
+    "build:all": "rm -rf packages/*/dist && bunx tsc --build --clean && bunx tsc --build"
   },
-  "type": "module",
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
 }
