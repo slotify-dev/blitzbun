@@ -1,23 +1,22 @@
 #!/usr/bin/env bun
-/* eslint-disable security/detect-non-literal-fs-filename */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable security/detect-non-literal-fs-filename */
 
 import { $ } from 'bun';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-
 import PACKAGE_ORDER from './packages';
 
 // Configuration
 interface Config {
-  dryRun: boolean;
   npmRegistry: string;
   access: 'public' | 'restricted';
+  dryRun: boolean;
 }
 
 const CONFIG: Config = {
-  access: 'public',
   npmRegistry: 'https://registry.npmjs.org/',
+  access: 'public',
   dryRun: process.argv.includes('--dry-run'),
 };
 
@@ -68,10 +67,10 @@ class Publisher {
       try {
         const data = JSON.parse(await readFile(packagePath, 'utf8'));
         this.packageData.set(pkgName, {
+          path: join(process.cwd(), 'packages', pkgName),
           data,
           name: data.name,
           version: data.version,
-          path: join(process.cwd(), 'packages', pkgName),
         });
       } catch (error) {
         throw new Error(
@@ -123,6 +122,22 @@ class Publisher {
     }
   }
 
+  private async checkIfVersionExists(
+    packageName: string,
+    version: string
+  ): Promise<boolean> {
+    try {
+      // Use npm view to check if the version exists
+      const result =
+        await $`npm view ${packageName}@${version} version --silent`;
+      const output = result.stdout.toString().trim();
+      return output === version;
+    } catch (error: any) {
+      console.log(error?.message);
+      return false;
+    }
+  }
+
   private async publishPackages(): Promise<void> {
     console.log('📦 Publishing packages...');
 
@@ -133,19 +148,16 @@ class Publisher {
       console.log(`\nProcessing ${pkgInfo.name}@${pkgInfo.version}...`);
 
       // Check if package already exists with this version
-      try {
-        const checkCmd =
-          await $`bun info ${pkgInfo.name}@${pkgInfo.version} --json`;
-        const info = JSON.parse(checkCmd.stdout.toString());
+      const versionExists = await this.checkIfVersionExists(
+        pkgInfo.name,
+        pkgInfo.version
+      );
 
-        if (info.version === pkgInfo.version) {
-          console.log(
-            `⏩ ${pkgInfo.name}@${pkgInfo.version} already exists, skipping`
-          );
-          continue;
-        }
-      } catch (error) {
-        console.log(error);
+      if (versionExists) {
+        console.log(
+          `⏩ ${pkgInfo.name}@${pkgInfo.version} already exists, skipping`
+        );
+        continue;
       }
 
       // Publish the package
