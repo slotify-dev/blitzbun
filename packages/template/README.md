@@ -4,27 +4,17 @@ CLI tool for creating new BlitzBun applications using the @blitzbun/framework te
 
 ## Installation
 
-### Using npm
-
 ```bash
+# Using npm
 npm install -g @blitzbun/create-blitzbun
-```
 
-### Using yarn
-
-```bash
+# Using yarn
 yarn global add @blitzbun/create-blitzbun
-```
 
-### Using pnpm
-
-```bash
+# Using pnpm
 pnpm add -g @blitzbun/create-blitzbun
-```
 
-### Using bun
-
-```bash
+# Using bun
 bun add -g @blitzbun/create-blitzbun
 ```
 
@@ -43,19 +33,25 @@ This will:
 3. Set up the project structure with all necessary files
 4. Update the package.json with your project name
 
-### Available Options
-
-- `--template, -t`: Specify template to use (default: 'default')
-- `--help`: Show help information
-- `--version`: Show version number
-
 ### After Project Creation
 
 Once your project is created, navigate to the directory and install dependencies:
 
 ```bash
+# go to new project dir
 cd my-app
-bun install
+
+# update dependencies and install
+bun update && bun install
+
+# run docker containers for local env
+docker-compose up -d
+
+# check running containers
+docker ps
+
+# check app logs
+docker logs -f app
 ```
 
 ### Available Scripts
@@ -105,9 +101,7 @@ my-app/
    ```
 
 2. **Configure your database** in `src/configs/db.ts`
-
 3. **Add your routes** in `src/modules/`
-
 4. **Create database migrations** using the console commands
 
 For more information, visit the [BlitzBun documentation](https://github.com/your-repo/blitzbun).
