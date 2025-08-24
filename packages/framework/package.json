@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "name": "@blitzbun/framework",
   "description": "A modern, fast, and secure web framework built with Bun.",
   "author": {
@@ -31,9 +31,9 @@
     "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
-    "@blitzbun/contracts": "^1.0.0",
-    "@blitzbun/core": "^1.0.0",
-    "@blitzbun/http": "^1.0.0"
+    "@blitzbun/contracts": "workspace:*",
+    "@blitzbun/core": "workspace:*",
+    "@blitzbun/http": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",

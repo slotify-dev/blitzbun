@@ -20,9 +20,8 @@ export default function createRequestLoggerMiddleware(
       userAgent: req.getHeader('user-agent'),
       requestId: req.id,
       method: req.method,
-      url: req.getUrl(),
-      path: req.path,
       ip: req.getIp(),
+      path: req.path,
       timestamp,
     };
 
