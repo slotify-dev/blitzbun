@@ -4,7 +4,7 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 
 import { $ } from 'bun';
-import { readFile } from 'fs/promises';
+import { readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import PACKAGE_ORDER from './packages';
 
@@ -208,10 +208,49 @@ class Publisher {
             publishArgs.push('--registry', CONFIG.npmRegistry);
           }
 
-          await $`cd ${pkgInfo.path} && bun ${publishArgs}`;
-          console.log(
-            `✅ Successfully published ${pkgInfo.name}@${pkgInfo.version}`
-          );
+          // Special handling for framework package - publish all files instead of just dist
+          if (pkgName === 'framework') {
+            // Create a temporary package.json backup
+            const originalPackageJsonPath = join(pkgInfo.path, 'package.json');
+            const backupPackageJsonPath = join(pkgInfo.path, 'package.json.backup');
+            
+            // Read current package.json
+            const originalPackageJson = JSON.parse(
+              await readFile(originalPackageJsonPath, 'utf8')
+            );
+            
+            // Create backup
+            await $`cp ${originalPackageJsonPath} ${backupPackageJsonPath}`;
+            
+            try {
+              // Modify package.json to include all files (remove or modify files field)
+              const modifiedPackageJson = { ...originalPackageJson };
+              delete modifiedPackageJson.files; // This will include all files
+              
+              // Write modified package.json
+              await writeFile(
+                originalPackageJsonPath,
+                JSON.stringify(modifiedPackageJson, null, 2),
+                'utf8'
+              );
+              
+              // Publish with all files
+              await $`cd ${pkgInfo.path} && bun ${publishArgs}`;
+              
+              console.log(
+                `✅ Successfully published ${pkgInfo.name}@${pkgInfo.version} (all files)`
+              );
+            } finally {
+              // Restore original package.json
+              await $`mv ${backupPackageJsonPath} ${originalPackageJsonPath}`;
+            }
+          } else {
+            // Normal publish for other packages
+            await $`cd ${pkgInfo.path} && bun ${publishArgs}`;
+            console.log(
+              `✅ Successfully published ${pkgInfo.name}@${pkgInfo.version}`
+            );
+          }
         } catch (error) {
           throw new Error(
             `Failed to publish ${pkgInfo.name}: ${(error as Error).message}`
