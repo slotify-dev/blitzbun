@@ -1,20 +1,12 @@
 {
   "files": [],
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src"
-    // "database/**/*",
-    // "drizzle.config.ts",
-  ],
+  "include": ["scripts"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
     // basic settings
-    "lib": [
-      "ESNext"
-    ],
+    "lib": ["ESNext"],
     "composite": false,
     "target": "ESNext",
     "module": "ESNext",
@@ -36,12 +28,8 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": true,
     "paths": {
-      "@database/*": [
-        "database/*"
-      ],
-      "@modules/*": [
-        "src/modules/*"
-      ]
+      "@database/*": ["database/*"],
+      "@modules/*": ["src/modules/*"]
     }
   },
   "references": [
