@@ -52,7 +52,8 @@
     "version:check": "bun run dist/version-check.js",
     "version:update": "bun run dist/version-update.js",
     "publish:dry-run": "bun run dist/publish.js --dry-run",
-    "build:all": "rm -rf packages/*/dist && bunx tsc --build --clean && bunx tsc --build"
+    "build:all": "rm -rf packages/*/dist && bunx tsc --build --clean && bunx tsc --build",
+    "build:scripts": "bunx tsc --project . --outDir dist --noEmit false --allowImportingTsExtensions false"
   },
   "workspaces": [
     "packages/*"
