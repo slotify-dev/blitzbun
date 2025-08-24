@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+/* eslint-disable security/detect-object-injection */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable security/detect-non-literal-fs-filename */
 
@@ -10,13 +11,13 @@ import PACKAGE_ORDER from './packages';
 // Configuration
 interface Config {
   npmRegistry: string;
-  access: 'public' | 'restricted';
+  access: 'public';
   dryRun: boolean;
 }
 
 const CONFIG: Config = {
-  npmRegistry: 'https://registry.npmjs.org/',
   access: 'public',
+  npmRegistry: 'https://registry.npmjs.org/',
   dryRun: process.argv.includes('--dry-run'),
 };
 
@@ -25,6 +26,13 @@ interface PackageInfo {
   path: string;
   name: string;
   version: string;
+}
+
+interface NpmPackageInfo {
+  name: string;
+  time?: Record<string, string>;
+  versions: Record<string, unknown>;
+  'dist-tags'?: Record<string, string>;
 }
 
 class Publisher {
@@ -127,13 +135,41 @@ class Publisher {
     version: string
   ): Promise<boolean> {
     try {
-      // Use npm view to check if the version exists
-      const result =
-        await $`npm view ${packageName}@${version} version --silent`;
-      const output = result.stdout.toString().trim();
-      return output === version;
-    } catch (error: any) {
-      console.log(error?.message);
+      // Properly encode the package name for the URL
+      let encodedPackageName: string;
+
+      if (packageName.startsWith('@')) {
+        // Handle scoped packages: @scope/package -> @scope%2Fpackage
+        const [scope, name] = packageName.slice(1).split('/');
+        encodedPackageName = `@${encodeURIComponent(scope)}%2F${encodeURIComponent(name)}`;
+      } else {
+        encodedPackageName = encodeURIComponent(packageName);
+      }
+
+      const registryUrl = `https://registry.npmjs.org/${encodedPackageName}`;
+      const response = await fetch(registryUrl);
+
+      if (response.status === 200) {
+        const packageInfo = (await response.json()) as NpmPackageInfo;
+        return (
+          packageInfo.versions && packageInfo.versions[version] !== undefined
+        );
+      }
+
+      // 404 means the package doesn't exist, so this version doesn't exist
+      if (response.status === 404) {
+        return false;
+      }
+
+      // For other status codes, log a warning but assume version doesn't exist
+      console.warn(
+        `⚠️  Registry returned HTTP ${response.status} for ${packageName}`
+      );
+      return false;
+    } catch (error) {
+      console.warn(
+        `⚠️  Failed to check ${packageName}@${version}: ${(error as Error).message}`
+      );
       return false;
     }
   }
