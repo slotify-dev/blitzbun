@@ -124,17 +124,28 @@ const cli = yargs(hideBin(process.argv))
   .scriptName('create-blitzbun')
   .usage('$0 <project-name>')
   .command(
-    '$0 <name>',
+    '$0 [name]',
     'Create a new BlitzBun application',
     (yargs) => {
       return yargs.positional('name', {
         describe: 'Name of the new BlitzBun application',
         type: 'string',
-        demandOption: true,
       });
     },
     async (argv) => {
-      const projectName = argv.name as string;
+      // Get project name from positional argument or from the first non-option argument
+      let projectName = argv.name as string;
+      
+      // If no name provided via positional, try to get it from remaining args
+      if (!projectName && argv._.length > 0) {
+        projectName = argv._[0] as string;
+      }
+      
+      if (!projectName) {
+        console.error(chalk.red('Error: Project name is required'));
+        console.log(chalk.white('Usage: bun create blitzbun <project-name>'));
+        process.exit(1);
+      }
 
       console.log(
         chalk.blue(`Creating new BlitzBun application: ${projectName}`)
