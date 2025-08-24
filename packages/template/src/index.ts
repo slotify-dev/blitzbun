@@ -116,6 +116,7 @@ async function createProject(projectName: string) {
       force: true,
     });
     await fs.rm(path.join(projectPath, 'package-lock.json'), { force: true });
+    await fs.rm(path.join(projectPath, 'package.json.backup'), { force: true });
 
     spinner.succeed(chalk.green(`Successfully created ${projectName}!`));
   } catch (error) {

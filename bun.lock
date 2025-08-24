@@ -36,7 +36,7 @@
     },
     "packages/core": {
       "name": "@blitzbun/core",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "dependencies": {
         "@aws-sdk/client-ses": "^3.873.0",
         "@aws-sdk/client-sns": "^3.873.0",
@@ -65,11 +65,11 @@
     },
     "packages/framework": {
       "name": "@blitzbun/framework",
-      "version": "1.0.0",
+      "version": "1.0.4",
       "dependencies": {
-        "@blitzbun/contracts": "^1.0.0",
-        "@blitzbun/core": "^1.0.0",
-        "@blitzbun/http": "^1.0.0",
+        "@blitzbun/contracts": "workspace:*",
+        "@blitzbun/core": "workspace:*",
+        "@blitzbun/http": "workspace:*",
       },
       "devDependencies": {
         "@eslint/js": "^9.34.0",
@@ -91,7 +91,7 @@
     },
     "packages/http": {
       "name": "@blitzbun/http",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "dependencies": {
         "@blitzbun/contracts": "workspace:*",
         "@blitzbun/core": "workspace:*",
@@ -112,7 +112,7 @@
     },
     "packages/template": {
       "name": "@blitzbun/create-blitzbun",
-      "version": "1.0.0",
+      "version": "1.0.4",
       "bin": {
         "create-blitzbun": "dist/index.js",
       },
