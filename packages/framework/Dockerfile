@@ -7,7 +7,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # copy code
-COPY packages /app/packages
 COPY package.json /app/package.json
 
 # Install dependencies
