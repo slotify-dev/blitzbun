@@ -46,24 +46,6 @@ This project is currently under active development and is not yet ready for prod
 - Node.js (for certain development tools)
 - PostgreSQL or SQLite (for database features)
 
-### Installation
-
-```bash
-# Clone and install dependencies
-bun install
-
-# Build packages
-rm -rf packages/*/dist
-bunx tsc --build --clean
-bunx tsc --build
-
-# Start development server
-bun run dev
-
-# Run tests
-bun test
-```
-
 ### Your First Application
 
 ```typescript
@@ -120,7 +102,7 @@ Explore the comprehensive documentation to learn about BlitzBun's concepts and f
 
 BlitzBun follows a modular architecture inspired by Laravel:
 
-```
+```bash
 BlitzBun Application
 ├── Application Container (IoC)
 ├── Service Providers
@@ -129,6 +111,22 @@ BlitzBun Application
 ├── Middleware Stack
 ├── Controllers & Models
 └── Database Layer
+```
+
+## Publishing Packages to NPM
+
+```bash
+# build local scripts first
+bun run build:scripts
+
+# version checks
+bun run version:check
+
+# dry run before publishing pacakges
+bun run publish:dry-run
+
+# publish packages to npm
+bun run publish:packages
 ```
 
 ## Contributing

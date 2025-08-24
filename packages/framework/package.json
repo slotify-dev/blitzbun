@@ -1,0 +1,64 @@
+{
+  "type": "module",
+  "version": "1.0.0",
+  "name": "@blitzbun/framework",
+  "description": "A modern, fast, and secure web framework built with Bun.",
+  "author": {
+    "name": "Sagar Patel",
+    "email": "sandip254@gmail.com"
+  },
+  "keywords": [
+    "bun",
+    "web",
+    "fast",
+    "secure",
+    "modern",
+    "framework",
+    "typescript",
+    "javascript"
+  ],
+  "scripts": {
+    "test": "bun test",
+    "prepare": "husky",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "cron": "bun --hot src/cron.ts",
+    "dev": "bun --hot src/index.ts",
+    "serve": "bun run dist/index.js",
+    "console": "bun run src/console.ts",
+    "worker": "bun --hot src/worker.ts",
+    "format:check": "prettier --check .",
+    "lint:fix": "eslint . --ext .ts --fix"
+  },
+  "dependencies": {
+    "@blitzbun/contracts": "workspace:*",
+    "@blitzbun/core": "workspace:*",
+    "@blitzbun/http": "workspace:*"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "@types/bun": "^1.2.20",
+    "@typescript-eslint/eslint-plugin": "^8.40.0",
+    "@typescript-eslint/parser": "^8.40.0",
+    "drizzle-kit": "^0.31.4",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-security": "^3.0.1",
+    "eslint-plugin-unicorn": "^60.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.40.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ]
+}
