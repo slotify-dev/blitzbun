@@ -100,6 +100,16 @@ async function createProject(projectName: string) {
     // Update package.json
     await updatePackageJson(projectPath, projectName);
 
+    // Copy .env.example to .env if it exists
+    const envExamplePath = path.join(projectPath, '.env.example');
+    const envPath = path.join(projectPath, '.env');
+    try {
+      await fs.access(envExamplePath);
+      await fs.copyFile(envExamplePath, envPath);
+    } catch (error) {
+      // .env.example doesn't exist, which is fine
+    }
+
     // Remove the framework from node_modules as we've copied its files
     await fs.rm(path.join(projectPath, 'node_modules'), {
       recursive: true,
@@ -135,12 +145,12 @@ const cli = yargs(hideBin(process.argv))
     async (argv) => {
       // Get project name from positional argument or from the first non-option argument
       let projectName = argv.name as string;
-      
+
       // If no name provided via positional, try to get it from remaining args
       if (!projectName && argv._.length > 0) {
         projectName = argv._[0] as string;
       }
-      
+
       if (!projectName) {
         console.error(chalk.red('Error: Project name is required'));
         console.log(chalk.white('Usage: bun create blitzbun <project-name>'));
@@ -157,7 +167,8 @@ const cli = yargs(hideBin(process.argv))
         console.log(chalk.cyan('\nNext steps:'));
         console.log(chalk.white(`  cd ${projectName}`));
         console.log(chalk.white('  bun install'));
-        console.log(chalk.white('  bun run dev'));
+        console.log(chalk.white('  docker compose up -d'));
+        console.log(chalk.white('  docker ps'));
       } catch (error) {
         console.error(chalk.red((error as Error).message));
         process.exit(1);
