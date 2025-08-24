@@ -1,1 +1,1 @@
-export default ['contracts', 'core', 'http'];
+export default ['contracts', 'core', 'http', 'framework'];
