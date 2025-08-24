@@ -314,7 +314,7 @@ export default (env) => ({
     },
   },
 
-  // Security configuration  
+  // Security configuration
   csp: {
     cors: {
       origin: process.env.NODE_ENV === 'production'
@@ -441,176 +441,6 @@ RATE_LIMIT_MAX=100
 RATE_LIMIT_WINDOW=900 # 15 minutes
 ```
 
-### Docker Production Setup
-
-```dockerfile
-# Dockerfile
-FROM oven/bun:alpine
-
-WORKDIR /app
-
-# Install dependencies
-COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile --production
-
-# Copy source
-COPY . .
-
-# Build
-RUN bun run build
-
-# Security: Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S blitzbun -u 1001
-USER blitzbun
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:8000/health || exit 1
-
-EXPOSE 8000
-
-CMD ["bun", "run", "serve"]
-```
-
-### Load Balancer Configuration (nginx)
-
-```nginx
-# /etc/nginx/sites-available/myapp
-upstream blitzbun_backend {
-    server 127.0.0.1:8000;
-    server 127.0.0.1:8001;
-    keepalive 32;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name api.myapp.com;
-
-    # SSL configuration
-    ssl_certificate /path/to/ssl/cert.pem;
-    ssl_certificate_key /path/to/ssl/key.pem;
-    ssl_protocols TLSv1.2 TLSv1.3;
-
-    # Security headers (additional to BlitzBun)
-    add_header X-Real-IP $remote_addr always;
-    add_header X-Forwarded-Proto https always;
-
-    # Health check endpoint
-    location /health {
-        proxy_pass http://blitzbun_backend;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        access_log off;
-    }
-
-    # API routes
-    location / {
-        proxy_pass http://blitzbun_backend;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-### Kubernetes Deployment
-
-```yaml
-# k8s/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: blitzbun-api
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: blitzbun-api
-  template:
-    metadata:
-      labels:
-        app: blitzbun-api
-    spec:
-      containers:
-        - name: api
-          image: myapp/blitzbun-api:latest
-          ports:
-            - containerPort: 8000
-          env:
-            - name: NODE_ENV
-              value: 'production'
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: password
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          resources:
-            requests:
-              memory: '256Mi'
-              cpu: '250m'
-            limits:
-              memory: '512Mi'
-              cpu: '500m'
-```
-
-### Monitoring with Prometheus
-
-```typescript
-// src/metrics.ts
-import { createHealthCheckMiddleware } from '@blitzbun/http/middlewares';
-
-// Custom metrics for business logic
-const businessChecks = [
-  {
-    name: 'active-users',
-    check: async () => {
-      const userCount = await getUsersCount();
-      return {
-        status: userCount > 0 ? ('pass' as const) : ('fail' as const),
-        activeUsers: userCount,
-        timestamp: new Date().toISOString(),
-      };
-    },
-  },
-  {
-    name: 'queue-health',
-    check: async () => {
-      const queueDepth = await getQueueDepth();
-      return {
-        status: queueDepth < 1000 ? ('pass' as const) : ('fail' as const),
-        queueDepth,
-        threshold: 1000,
-      };
-    },
-  },
-];
-
-export const healthMiddleware = createHealthCheckMiddleware({
-  customChecks: businessChecks,
-  path: '/health',
-  readinessPath: '/ready',
-});
-```
-
 ### Session Security in Production
 
 ```typescript
@@ -700,6 +530,31 @@ const sessionConfig = {
 3. Ensure all security tests pass
 4. Add documentation for new security features
 5. Submit a pull request
+
+## 📖 Complete Documentation
+
+For in-depth guides and advanced features, see the [docs](./docs/) folder:
+
+### Core Components
+- [📱 Application](./docs/application.md) - Application container and lifecycle
+- [🏗️ Container](./docs/container.md) - Dependency injection system
+- [⚙️ Commands](./docs/command.md) - CLI command structure
+- [📦 Providers](./docs/provider.md) - Service registration
+- [🏭 Modules](./docs/modules.md) - Application modules
+- [💾 Caching](./docs/caching.md) - Caching strategies
+- [⚡ Jobs](./docs/job.md) - Background job processing
+
+### Application Kernels
+- [🏛️ Kernels Overview](./docs/kernels.md) - Application execution modes
+- [🌐 HTTP Kernel](./docs/kernels/http-kernel.md) - Web server kernel
+- [💻 Console Kernel](./docs/kernels/console-kernel.md) - CLI kernel
+- [⏰ Cron Kernel](./docs/kernels/cron-kernel.md) - Scheduled tasks
+- [👷 Worker Kernel](./docs/kernels/worker-kernel.md) - Background processing
+
+### Database & Storage
+- [🗃️ Database](./docs/database.md) - Database operations
+- [📊 Models](./docs/models.md) - Data models
+- [🏪 Repository](./docs/repository.md) - Data access layer
 
 ## 📄 License
 

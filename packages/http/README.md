@@ -1,54 +1,37 @@
-# Using Websockets
+# @blitzbun/http
 
-Import and instantiate WSSessionManager
+BlitzBun's comprehensive HTTP package for building high-performance web applications and APIs.
+
+## 📖 Documentation
+
+For complete documentation, guides, and examples, see the [docs](./docs/) folder:
+
+- [📖 Overview](./docs/overview.md) - Package overview and quick start
+- [🛣️ Routing](./docs/routing.md) - URL routing and parameter handling  
+- [🎮 Controllers](./docs/controllers.md) - Request handling and organization
+- [📥 Request & Response](./docs/request-response.md) - HTTP data management
+- [🛡️ Middleware](./docs/middleware.md) - Request/response processing
+- [✅ Validation](./docs/validation.md) - Input validation and sanitization
+- [🔌 WebSocket](./docs/websocket.md) - Real-time communication
+- [🔄 Transformer](./docs/transformer.md) - Data transformation
+
+## Installation
+
+```bash
+bun add @blitzbun/http
+```
+
+## Quick Start
 
 ```typescript
-import { ServerWebSocket } from 'bun';
-import WSSessionManager from './classes/wsSession';
-import type { WsSessionData } from '@blitzbun/contracts';
+import { Application } from '@blitzbun/core';
+import { HttpKernel } from '@blitzbun/http';
 
-interface MySessionData extends WsSessionData {
-  userId?: string;
-  role?: string;
-}
+const app = new Application(__dirname);
+const kernel = new HttpKernel(app);
 
-const sessionManager = new WSSessionManager<MySessionData>((session) => ({
-  role: 'guest', // Default role on session creation
-}));
-
-function wsHandler(sessionManager: WSSessionManager<MySessionData>) {
-  return {
-    onOpen: (ws: ServerWebSocket<WebSocketContext<MySessionData>>) => {
-      const session = sessionManager.create(ws);
-      ws.data.session = session;
-      ws.data.logger.info(`Session created: ${session.id}`);
-    },
-
-    onMessage: (
-      ws: ServerWebSocket<WebSocketContext<MySessionData>>,
-      msg: string
-    ) => {
-      const session = ws.data.session;
-      if (session) {
-        sessionManager.update(session.id, { lastMessageAt: new Date() });
-      }
-    },
-
-    onClose: (
-      ws: ServerWebSocket<WebSocketContext<MySessionData>>,
-      code: number,
-      reason: string
-    ) => {
-      const session = ws.data.session;
-      if (session) {
-        sessionManager.remove(session.id);
-        ws.data.logger.info(`Session removed: ${session.id}`);
-      }
-    },
-  };
-}
-
-// Usage:
-app.use('wsSession', new WSSessionManager<MySessionData>());
-wsRouter.register('/my-ws-path', wsHandler(app.get('wsSession')));
+// Start the server
+await kernel.handle();
 ```
+
+See the [complete documentation](./docs/overview.md) for detailed usage examples.

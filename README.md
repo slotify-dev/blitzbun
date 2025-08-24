@@ -61,42 +61,25 @@ await kernel.handle();
 
 ## Documentation
 
-Explore the comprehensive documentation to learn about BlitzBun's concepts and features:
+Explore the comprehensive documentation organized by package:
 
-### Framework Concepts
+### 📦 Package Documentation
 
-- [📱 Application](./docs/application/application.md) - The heart of your BlitzBun application
-- [⚙️ Kernels](./docs/application/kernels.md) - HTTP, Console, Worker, and Cron kernels
-- [📦 Container & Dependency Injection](./docs/application/container.md) - Service container and DI system
+#### [@blitzbun/http](./packages/http/README.md) - HTTP Server & Web Framework
+- [🌐 Overview](./packages/http/docs/overview.md) - Complete HTTP package guide
+- [🛣️ Routing](./packages/http/docs/routing.md) - URL routing and parameter handling
+- [🎮 Controllers](./packages/http/docs/controllers.md) - Organized request handling
+- [📥 Request & Response](./packages/http/docs/request-response.md) - HTTP data management
+- [🛡️ Middleware](./packages/http/docs/middleware.md) - Request/response processing
+- [✅ Validation](./packages/http/docs/validation.md) - Input validation system
+- [🔌 WebSocket](./packages/http/docs/websocket.md) - Real-time communication
+- [🔄 Transformer](./packages/http/docs/transformer.md) - Data transformation
 
-### HTTP Package
+#### [@blitzbun/core](./packages/core/README.md) - Framework Foundation
+Core application features, dependency injection, and essential services. See the [complete core documentation](./packages/core/README.md) for all available features.
 
-- [🌐 HTTP Overview](./docs/http/overview.md) - Complete HTTP package guide
-- [🛣️ Routing](./docs/http/routing.md) - URL routing and parameter handling
-- [🎮 Controllers](./docs/http/controllers.md) - Organized request handling
-- [📥 Request & Response](./docs/http/request-response.md) - HTTP data management
-- [🛡️ Middleware](./docs/http/middleware.md) - Request/response processing
-- [✅ Validation](./docs/http/validation.md) - Input validation system
-
-### Database & Storage
-
-- [💾 Database](./docs/database/database.md) - Database connections and queries
-- [🗃️ Models & ORM](./docs/database/models.md) - Data modeling and relationships
-- [📋 Migrations](./docs/migrations.md) - Database schema management
-- [⚡ Caching](./docs/application/caching.md) - High-performance caching system
-
-### Advanced Features
-
-- [🔌 WebSocket](./docs/http/websocket.md) - Real-time communication
-- [📋 Commands](./docs/application/command.md) - CLI command system
-- [👷 Workers & Queues](./docs/application/job.md) - Background job processing
-- [⏰ Cron Jobs](./docs/application/kernels/cron-kernel.md) - Scheduled task execution
-
-### Development & Deployment
-
-- [🧪 Testing](./docs/testing.md) - Testing your applications
-- [📊 Performance](./docs/performance.md) - Optimization and benchmarks
-- [🚀 Deployment](./docs/deployment.md) - Production deployment guide
+#### [@blitzbun/contracts](./packages/contracts/README.md) - TypeScript Interfaces
+TypeScript contracts and interfaces ensuring consistency across all BlitzBun packages.
 
 ## Architecture Overview
 

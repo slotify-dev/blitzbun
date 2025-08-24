@@ -13,6 +13,7 @@ bun add @blitzbun/contracts
 This package provides TypeScript interfaces and contracts for:
 
 ### Core Framework
+
 - **Application** - Application container interface
 - **Service Provider** - Service registration and bootstrapping
 - **Container** - Dependency injection container
@@ -22,14 +23,16 @@ This package provides TypeScript interfaces and contracts for:
 - **Transformer** - Data transformation interface
 
 ### HTTP Package
+
 - **Request** - HTTP request interface
-- **Response** - HTTP response interface  
+- **Response** - HTTP response interface
 - **Route** - Route definition contracts
 - **Router** - HTTP and WebSocket routing
 - **Validator** - Input validation interface
 - **Server** - HTTP server contracts
 
 ### Database & Caching
+
 - **Repository** - Data access layer interface
 - **Cache** - Caching service contracts
 - **Logger** - Logging service interface
@@ -40,19 +43,16 @@ This package provides TypeScript interfaces and contracts for:
 Import contracts in your application:
 
 ```typescript
-import type { 
-  HttpRequestContract, 
+import type {
+  HttpRequestContract,
   HttpResponseContract,
   ApplicationContract,
-  ServiceProviderContract
+  ServiceProviderContract,
 } from '@blitzbun/contracts';
 
 // Use in your implementations
 export class MyController {
-  async handle(
-    request: HttpRequestContract, 
-    response: HttpResponseContract
-  ) {
+  async handle(request: HttpRequestContract, response: HttpResponseContract) {
     // Your controller logic
   }
 }
@@ -60,17 +60,16 @@ export class MyController {
 
 ## Documentation
 
-For detailed usage examples and framework concepts, see the [BlitzBun Documentation](../../docs/):
+This package provides type definitions and interfaces used across the BlitzBun framework. For detailed usage examples and implementation guides, refer to the documentation in the respective packages:
 
-- [Application](../../docs/application/application.md) - Application container and lifecycle
-- [HTTP Package](../../docs/http/overview.md) - HTTP request handling
-- [Routing](../../docs/http/routing.md) - URL routing system
-- [Controllers](../../docs/http/controllers.md) - Request controllers
-- [Validation](../../docs/http/validation.md) - Input validation
-- [Database](../../docs/database/database.md) - Database operations
-- [Caching](../../docs/application/caching.md) - Caching system
-- [Commands](../../docs/application/command.md) - CLI commands
-- [WebSocket](../../docs/http/websocket.md) - Real-time communication
+- **Core Framework**: See [@blitzbun/core documentation](../core/docs/)
+- **HTTP Features**: See [@blitzbun/http documentation](../http/docs/)
+
+### Contract Categories
+
+**Core Contracts** - Application, Container, Providers, Commands, Jobs
+**HTTP Contracts** - Request, Response, Routing, Validation, WebSocket
+**Data Contracts** - Repository, Cache, Logger, Database models
 
 ## Contributing
 
