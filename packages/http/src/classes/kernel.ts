@@ -18,7 +18,12 @@ export default class HttpKernel<
     const configService = this.app.get('config');
 
     // Add security middleware globally
-    server.use(createSecurityMiddleware(configService.get('app.csp', {})));
+    server.use(
+      createSecurityMiddleware(
+        configService.get('security', {}),
+        configService.get('cors', {})
+      )
+    );
 
     await server.start();
 

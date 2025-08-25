@@ -1,4 +1,5 @@
 import {
+  CorsOptions,
   HttpMiddleware,
   HttpRequestContract,
   HttpResponseContract,
@@ -47,12 +48,11 @@ function buildCSP(directives: Record<string, string | string[]>): string {
 }
 
 export default function createSecurityMiddleware(
-  options: SecurityOptions = {}
+  options: SecurityOptions = {},
+  corsOptions: CorsOptions = {}
 ): HttpMiddleware {
   const config = { ...defaultOptions, ...options };
-  const corsMiddleware = config.cors
-    ? createCorsMiddleware(typeof config.cors === 'object' ? config.cors : {})
-    : null;
+  const corsMiddleware = createCorsMiddleware(corsOptions);
 
   return async (
     req: HttpRequestContract,
