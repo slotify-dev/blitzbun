@@ -66,6 +66,31 @@ bun add -g @blitzbun/create-blitzbun
 
 Explore the comprehensive documentation organized by package:
 
+### Core Packages
+
+- **[Contracts](./packages/contracts/README.md)** - Core interfaces and contracts that define the framework's architecture
+- **[Core](./packages/core/README.md)** - Essential framework components including application container, providers, and kernels
+  - [Application](./packages/core/docs/application.md) - Application bootstrapping and lifecycle
+  - [Container](./packages/core/docs/container.md) - Dependency injection container
+  - [Caching](./packages/core/docs/caching.md) - Multi-driver cache system
+  - [Database](./packages/core/docs/database.md) - Database integration and ORM
+  - [Kernels](./packages/core/docs/kernels.md) - HTTP, Console, Cron, and Worker kernels
+  - [Providers](./packages/core/docs/provider.md) - Service provider architecture
+  - [Commands](./packages/core/docs/command.md) - CLI command system
+  - [Jobs & Queues](./packages/core/docs/job.md) - Background job processing
+  - [Repository Pattern](./packages/core/docs/repository.md) - Data access layer abstraction
+  - [Models](./packages/core/docs/models.md) - Database model definitions
+  - [Modules](./packages/core/docs/modules.md) - Modular application architecture
+- **[HTTP](./packages/http/README.md)** - HTTP server, routing, middleware, and WebSocket support
+  - [Overview](./packages/http/docs/overview.md) - HTTP package overview
+  - [Routing](./packages/http/docs/routing.md) - Route definition and parameter binding
+  - [Controllers](./packages/http/docs/controllers.md) - Request handling and response generation
+  - [Middleware](./packages/http/docs/middleware.md) - Request/response pipeline middleware
+  - [Request & Response](./packages/http/docs/request-response.md) - HTTP request and response objects
+  - [Validation](./packages/http/docs/validation.md) - Input validation and sanitization
+  - [Transformers](./packages/http/docs/transformer.md) - Data transformation and serialization
+  - [WebSocket](./packages/http/docs/websocket.md) - Real-time WebSocket communication
+
 ## Contributing
 
 BlitzBun is actively developed and we welcome contributions! Please see our contributing guide for details.
