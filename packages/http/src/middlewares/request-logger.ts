@@ -16,41 +16,32 @@ export default function createRequestLoggerMiddleware(
     const startTime = process.hrtime.bigint();
     const timestamp = new Date().toISOString();
 
-    const logData = {
-      userAgent: req.getHeader('user-agent'),
-      requestId: req.id,
-      method: req.method,
-      ip: req.getIp(),
-      path: req.path,
-      timestamp,
-    };
-
-    logger.info('Incoming request', logData);
-
     try {
       next();
       res.onEnd(async () => {
         const endTime = process.hrtime.bigint();
-        const duration = Number(endTime - startTime) / 1000000;
-
-        logger.info('Request completed', {
-          ...logData,
-          status: res.getStatusCode(),
-          duration: `${duration.toFixed(2)}ms`,
+        const responseTimeMs = Math.round(
+          Number(endTime - startTime) / 1000000
+        );
+        logger.info({
+          method: req.method,
+          requestId: req.id,
+          url: req.getUrl(),
+          responseTimeMs,
         });
       });
     } catch (error) {
       const endTime = process.hrtime.bigint();
-      const duration = Number(endTime - startTime) / 1000000;
+      const responseTimeMs = Math.round(Number(endTime - startTime) / 1000000);
 
-      const errorLogData = {
-        ...logData,
-        status: res.getStatusCode() || 500,
-        duration: `${duration.toFixed(2)}ms`,
+      logger.error({
+        responseTimeMs,
+        url: req.getUrl(),
+        method: req.method,
+        requestId: req.id,
         error: error instanceof Error ? error.message : String(error),
-      };
+      });
 
-      logger.error('Request failed', errorLogData);
       next(error);
     }
   };

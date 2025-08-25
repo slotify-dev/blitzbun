@@ -112,12 +112,6 @@ export default class HttpServer<T extends AppRegistry>
         await next(0);
 
         if (res.isEmpty()) {
-          this.logger.warn('Empty response returned', {
-            url: req.getUrl(),
-            path: req.path,
-            method: req.method,
-            requestId: req.id,
-          });
           response = res.status(404).text('Not Found').getFinalResponse();
           return;
         }
@@ -134,8 +128,8 @@ export default class HttpServer<T extends AppRegistry>
     } catch (err) {
       const error = err as Error;
       this.logger.error('Server error occurred', {
-        url: nativeRequest.url,
         method: nativeRequest.method,
+        url: nativeRequest.url,
         error: error.message,
         stack: error.stack,
       });

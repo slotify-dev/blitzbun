@@ -1,5 +1,5 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "dist/index.js",
   "name": "@blitzbun/http",
   "types": "dist/index.d.ts",
