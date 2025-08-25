@@ -292,4 +292,7 @@ export interface SecureSessionOptions {
   regenerateOnAuth?: boolean;
   sameSite?: 'Strict' | 'Lax' | 'None';
   rolling?: boolean; // Renew session on each request
+  strategy?: 'redis' | 'memory'; // Session storage strategy
 }
+
+export type SessionOptions = SecureSessionOptions;

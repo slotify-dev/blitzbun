@@ -39,7 +39,16 @@ export default async (
 
   if (jwtLogin && jwtToken) {
     try {
-      const verified = jwt.verify(req.cookie('JSESSIONID', token), jwtToken);
+      // Get session config to use the configured session cookie name
+      const sessionConfig = configService.get('session', {}) as {
+        name?: string;
+      };
+      const sessionCookieName = sessionConfig.name || 'JSESSIONID';
+
+      const verified = jwt.verify(
+        req.cookie(sessionCookieName, token),
+        jwtToken
+      );
       if (typeof verified === 'object' && verified !== null) {
         req.setUser(verified as Record<string, unknown>);
       }

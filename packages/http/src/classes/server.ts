@@ -218,20 +218,6 @@ export default class HttpServer<T extends AppRegistry>
         }
       });
     });
-
-    // Handle uncaught exceptions
-    process.once('uncaughtException', (error) => {
-      this.logger.error('Uncaught exception:', {
-        error: error.message,
-        stack: error.stack,
-      });
-      process.exit(1);
-    });
-
-    process.once('unhandledRejection', (reason) => {
-      this.logger.error('Unhandled promise rejection:', { reason });
-      process.exit(1);
-    });
   }
 
   public getServer(): BunServer | undefined {

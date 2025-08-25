@@ -35,25 +35,32 @@ export default async (
     const appContainer = AppContext.get();
     const configService = appContainer.resolve('config');
 
-    // If sessions disabled, skip middleware
-    const redisSession = configService.get<boolean>('app.redisSession', false);
-    if (!redisSession) {
-      return next();
-    }
-
     // Get session configuration
     const sessionConfig = {
       ...defaultSessionOptions,
       ...configService.get('session', {}),
     };
 
+    // Check if sessions are enabled via strategy
+    if (
+      !sessionConfig.strategy ||
+      (sessionConfig.strategy !== 'redis' &&
+        sessionConfig.strategy !== 'memory')
+    ) {
+      return next();
+    }
+
     // Override secure setting based on environment
     sessionConfig.secure =
       configService.get<boolean>('app.isProd', false) ||
       req.getHeader('x-forwarded-proto') === 'https';
 
-    // Get session store (redis_session client)
-    const sessionStore = appContainer.resolve('cache').store('redis_session');
+    // Get session store based on strategy
+    const cacheManager = appContainer.resolve('cache');
+    const sessionStore =
+      sessionConfig.strategy === 'redis'
+        ? cacheManager.store('redis_session')
+        : cacheManager.store('memory');
 
     // Try get existing sessionId cookie
     let sessionId = req.cookie<string>(sessionConfig.name!);

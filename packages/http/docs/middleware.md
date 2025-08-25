@@ -707,6 +707,263 @@ router.group(
 );
 ```
 
+## Session Middleware
+
+BlitzBun includes built-in session middleware that supports both Redis and memory storage strategies. Sessions provide persistent data storage across multiple requests for the same user.
+
+### Configuration
+
+Configure session settings in your session config file:
+
+```typescript
+// framework/src/configs/session.ts
+export default (envService: EnvContract): SessionOptions => {
+  return {
+    name: envService.get('SESSION_NAME', '__Secure-SessionId'),
+    maxAge: parseInt(envService.get('SESSION_MAX_AGE', '604800'), 10), // 7 days
+    secure: envService.get('SESSION_SECURE', 'true') === 'true',
+    httpOnly: envService.get('SESSION_HTTP_ONLY', 'true') === 'true',
+    sameSite: envService.get('SESSION_SAME_SITE', 'Strict') as 'Strict' | 'Lax' | 'None',
+    domain: envService.get('SESSION_DOMAIN', undefined),
+    csrfProtection: envService.get('SESSION_CSRF_PROTECTION', 'true') === 'true',
+    regenerateOnAuth: envService.get('SESSION_REGENERATE_ON_AUTH', 'true') === 'true',
+    rolling: envService.get('SESSION_ROLLING', 'false') === 'true',
+    secret: envService.get('SESSION_SECRET', ''),
+    strategy: envService.get('SESSION_STRATEGY', 'memory') as 'redis' | 'memory',
+  };
+};
+```
+
+### Environment Variables
+
+Set these environment variables to configure session behavior:
+
+```bash
+# Session storage strategy - 'redis' or 'memory'
+SESSION_STRATEGY=redis
+
+# Session cookie name
+SESSION_NAME=__Secure-SessionId
+
+# Session lifetime in seconds (default: 7 days)
+SESSION_MAX_AGE=604800
+
+# Security settings
+SESSION_SECURE=true
+SESSION_HTTP_ONLY=true
+SESSION_SAME_SITE=Strict
+
+# CSRF protection
+SESSION_CSRF_PROTECTION=true
+
+# Regenerate session ID on authentication
+SESSION_REGENERATE_ON_AUTH=true
+
+# Rolling sessions (renew on each request)
+SESSION_ROLLING=false
+
+# Session secret for signing
+SESSION_SECRET=your-secret-key
+```
+
+### Storage Strategies
+
+#### Memory Strategy (Default)
+```bash
+SESSION_STRATEGY=memory
+```
+- Uses in-memory storage via the cache service
+- Fast but non-persistent across server restarts
+- Suitable for development and single-server deployments
+
+#### Redis Strategy
+```bash
+SESSION_STRATEGY=redis
+```
+- Uses Redis for persistent session storage
+- Scales across multiple servers
+- Suitable for production deployments
+
+### Usage in Routes
+
+The session middleware is automatically applied when enabled. Access session data through the request object:
+
+```typescript
+// Reading session data
+router.get('/profile', (req, res) => {
+  const session = req.getSession();
+  const userId = session.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  
+  res.json({ userId, profile: session.userProfile });
+});
+
+// Writing session data
+router.post('/login', async (req, res) => {
+  const { email, password } = req.getBody();
+  
+  // Validate credentials
+  const user = await userService.authenticate(email, password);
+  
+  if (user) {
+    const session = req.getSession();
+    session.userId = user.id;
+    session.userProfile = {
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
+    
+    // Regenerate session ID for security
+    req.sessionRegenerate();
+    
+    res.json({ success: true, user });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
+// Clearing session data
+router.post('/logout', (req, res) => {
+  const session = req.getSession();
+  
+  // Clear specific session data
+  delete session.userId;
+  delete session.userProfile;
+  
+  // Or clear entire session
+  // req.clearSession();
+  
+  res.json({ success: true, message: 'Logged out' });
+});
+```
+
+### CSRF Protection
+
+When CSRF protection is enabled, the session middleware automatically:
+
+1. Generates a unique CSRF token for each session
+2. Sets the token in the `X-CSRF-Token` response header
+3. Validates the token on state-changing requests (POST, PUT, PATCH, DELETE)
+
+#### Frontend Usage
+
+```javascript
+// Get CSRF token from response header
+const csrfToken = response.headers['x-csrf-token'];
+
+// Include in subsequent requests
+fetch('/api/data', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-CSRF-Token': csrfToken
+  },
+  body: JSON.stringify({ data: 'example' })
+});
+```
+
+#### Alternative Token Sources
+
+The middleware accepts CSRF tokens from multiple sources:
+- `X-CSRF-Token` header (recommended)
+- `CSRF-Token` header
+- `_token` field in request body
+
+### Session Security Features
+
+#### Session Regeneration
+```typescript
+// Regenerate session ID (prevents session fixation)
+req.sessionRegenerate();
+```
+
+#### Rolling Sessions
+When enabled, session lifetime is renewed on each request:
+```bash
+SESSION_ROLLING=true
+```
+
+#### Secure Cookies
+Sessions automatically use secure cookies in production and when behind HTTPS proxy.
+
+#### Session Validation
+The middleware automatically:
+- Validates session existence
+- Checks session expiration
+- Handles session cleanup
+
+### Custom Session Middleware
+
+Create custom session-aware middleware:
+
+```typescript
+const requireAuth = async (req, res, next) => {
+  const session = req.getSession();
+  
+  if (!session.userId) {
+    return res.status(401).json({
+      success: false,
+      error: 'Authentication required'
+    });
+  }
+  
+  // Load user data
+  const user = await userService.findById(session.userId);
+  if (!user) {
+    // Clear invalid session
+    delete session.userId;
+    return res.status(401).json({
+      success: false,
+      error: 'Invalid session'
+    });
+  }
+  
+  // Add user to request
+  req.setUser(user);
+  next();
+};
+
+// Usage
+router.get('/dashboard', requireAuth, (req, res) => {
+  const user = req.getUser();
+  const session = req.getSession();
+  
+  res.json({
+    user,
+    lastAccess: session.lastAccessed
+  });
+});
+```
+
+### Session Debugging
+
+Enable session debugging in development:
+
+```typescript
+const sessionDebug = async (req, res, next) => {
+  const session = req.getSession();
+  
+  console.log('Session Debug:', {
+    sessionId: session.id,
+    isNew: session.isNew,
+    data: session,
+    createdAt: session.createdAt,
+    lastAccessed: session.lastAccessed
+  });
+  
+  next();
+};
+
+// Apply in development only
+if (process.env.NODE_ENV === 'development') {
+  app.use(sessionDebug);
+}
+```
+
 ## Custom Middleware Examples
 
 ### Request Size Limiter
