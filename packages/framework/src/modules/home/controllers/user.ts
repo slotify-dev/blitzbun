@@ -4,6 +4,8 @@ import UserRepository from '@modules/home/repository/user';
 import UsersTransformer from '@modules/home/transformers/user';
 
 export default class UserController {
+  constructor(private userRepository: UserRepository) {}
+
   home = async (req: HttpRequestContract, res: HttpResponseContract) => {
     return res.status(200).json({
       success: true,
@@ -21,10 +23,9 @@ export default class UserController {
       });
     }
 
-    const userRepository = new UserRepository();
     const userTransformer = new UsersTransformer(req);
+    const user = await this.userRepository.getByUuid(userUuid);
 
-    const user = await userRepository.getByUuid(userUuid);
     if (!user) {
       return res.status(404).json({
         success: false,
