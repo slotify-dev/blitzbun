@@ -44,7 +44,7 @@ export default async (
     // Get session configuration
     const sessionConfig = {
       ...defaultSessionOptions,
-      ...configService.get('app.session', {}),
+      ...configService.get('session', {}),
     };
 
     // Override secure setting based on environment

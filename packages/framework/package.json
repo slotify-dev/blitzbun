@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "name": "@blitzbun/framework",
   "description": "A modern, fast, and secure web framework built with Bun.",
   "author": {

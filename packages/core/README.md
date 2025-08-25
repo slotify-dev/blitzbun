@@ -36,27 +36,8 @@ import { Application } from '@blitzbun/core';
 import { HttpKernel } from '@blitzbun/http';
 
 const app = new Application();
-
-// Configure security middleware
-const securityOptions = {
-  cors: {
-    origin: ['http://localhost:3000', 'https://myapp.com'],
-    credentials: true,
-  },
-  hsts: {
-    maxAge: 31536000,
-    includeSubDomains: true,
-  },
-  contentSecurityPolicy: {
-    directives: {
-      'default-src': ["'self'"],
-      'script-src': ["'self'", "'unsafe-inline'"],
-    },
-  },
-};
-
-// Start the HTTP server with security
 const kernel = new HttpKernel(app);
+
 await kernel.handle();
 ```
 
@@ -294,49 +275,111 @@ await kernel.handle();
 
 ### Configuration-Based Setup
 
-All features are now configured through your app configuration:
+All features are now configured through separate config files for better organization:
 
 ```typescript
 // configs/app.ts
-export default (env) => ({
-  // Graceful shutdown (enabled by default)
-  gracefulShutdown: true,
-  shutdown: {
-    timeout: 30000, // 30 seconds
-    signals: ['SIGTERM', 'SIGINT'],
-    onSignal: async (signal) => {
-      console.log(`Shutdown initiated by ${signal}`);
-      // Custom cleanup here
-    },
-    onShutdown: async () => {
-      console.log('Final cleanup...');
-      // Database closing, log flushing, etc.
+export default (envService) => ({
+  isDevEnv: envService.get('APP_ENV') === 'development',
+  jwtToken: envService.get('JWT_SECRET'),
+  port: envService.get('APP_PORT'),
+  jwtLogin: true,
+  log: {
+    level: 'info',
+  },
+});
+```
+
+```typescript
+// configs/security.ts
+export default (envService) => ({
+  referrerPolicy: envService.get(
+    'SECURITY_REFERRER_POLICY',
+    'strict-origin-when-cross-origin'
+  ),
+  crossOriginResourcePolicy:
+    envService.get('SECURITY_CORP', 'false') === 'true',
+  crossOriginEmbedderPolicy: envService.get('SECURITY_COEP', 'true') === 'true',
+  crossOriginOpenerPolicy: envService.get('SECURITY_COOP', 'true') === 'true',
+  contentTypeOptions:
+    envService.get('SECURITY_CONTENT_TYPE_OPTIONS', 'true') === 'true',
+  frameOptions: envService.get('SECURITY_FRAME_OPTIONS', 'DENY'),
+  xssProtection: envService.get('SECURITY_XSS_PROTECTION', 'true') === 'true',
+  hsts: {
+    preload: envService.get('SECURITY_HSTS_PRELOAD', 'false') === 'true',
+    maxAge: parseInt(envService.get('SECURITY_HSTS_MAX_AGE', '31536000'), 10),
+    includeSubDomains:
+      envService.get('SECURITY_HSTS_INCLUDE_SUBDOMAINS', 'true') === 'true',
+  },
+  contentSecurityPolicy: {
+    reportOnly: envService.get('SECURITY_CSP_REPORT_ONLY', 'false') === 'true',
+    directives: {
+      'font-src': envService.get('SECURITY_CSP_FONT_SRC', "'self'").split(','),
+      'script-src': envService
+        .get('SECURITY_CSP_SCRIPT_SRC', "'self'")
+        .split(','),
+      'default-src': envService
+        .get('SECURITY_CSP_DEFAULT_SRC', "'self'")
+        .split(','),
+      'connect-src': envService
+        .get('SECURITY_CSP_CONNECT_SRC', "'self'")
+        .split(','),
+      'frame-ancestors': envService
+        .get('SECURITY_CSP_FRAME_ANCESTORS', "'none'")
+        .split(','),
+      'img-src': envService
+        .get('SECURITY_CSP_IMG_SRC', "'self',data:,https:")
+        .split(','),
+      'style-src': envService
+        .get('SECURITY_CSP_STYLE_SRC', "'self','unsafe-inline'")
+        .split(','),
     },
   },
+});
+```
 
-  // Security configuration
-  csp: {
-    cors: {
-      origin: process.env.NODE_ENV === 'production'
-        ? ['https://myapp.com', 'https://api.myapp.com']
-        : ['http://localhost:3000', 'http://localhost:3001'],
-      credentials: true,
-    },
-    hsts: {
-      maxAge: 31536000, // 1 year
-      includeSubDomains: true,
-      preload: true,
-    },
-    contentSecurityPolicy: {
-      directives: {
-        'default-src': ["'self'"],
-        'script-src': ["'self'", "'unsafe-inline'"],
-        'img-src': ["'self'", 'data:', 'https:'],
-      },
-    },
-  },
+```typescript
+// configs/cors.ts
+export default (envService) => ({
+  origin: envService.get('CORS_ORIGIN', '*'),
+  credentials: envService.get('CORS_CREDENTIALS', 'false') === 'true',
+  maxAge: parseInt(envService.get('CORS_MAX_AGE', '86400'), 10),
+  preflightContinue:
+    envService.get('CORS_PREFLIGHT_CONTINUE', 'false') === 'true',
+  optionsSuccessStatus: parseInt(
+    envService.get('CORS_OPTIONS_SUCCESS_STATUS', '204'),
+    10
+  ),
+  methods: envService
+    .get('CORS_METHODS', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS')
+    .split(','),
+  allowedHeaders: envService
+    .get('CORS_ALLOWED_HEADERS', 'Content-Type,Authorization,X-Requested-With')
+    .split(','),
+  exposedHeaders: envService
+    .get('CORS_EXPOSED_HEADERS', '')
+    .split(',')
+    .filter(Boolean),
+});
+```
 
-  // Health checks for production dependencies
+```typescript
+// configs/session.ts
+export default (envService) => ({
+  name: envService.get('SESSION_NAME', '__Secure-SessionId'),
+  maxAge: parseInt(envService.get('SESSION_MAX_AGE', '604800'), 10), // 7 days
+  secure: envService.get('SESSION_SECURE', 'true') === 'true',
+  httpOnly: envService.get('SESSION_HTTP_ONLY', 'true') === 'true',
+  sameSite: envService.get('SESSION_SAME_SITE', 'Strict'),
+  domain: envService.get('SESSION_DOMAIN', undefined),
+  csrfProtection: envService.get('SESSION_CSRF_PROTECTION', 'true') === 'true',
+  regenerateOnAuth: envService.get('SESSION_REGENERATE_ON_AUTH', 'true') === 'true',
+  rolling: envService.get('SESSION_ROLLING', 'false') === 'true',
+  secret: envService.get('SESSION_SECRET', ''),
+});
+```
+
+// Health checks for production dependencies
 const healthChecks = [
   {
     name: 'database',
@@ -422,7 +465,18 @@ APP_VERSION=1.2.3
 # Security
 APP_JWT_TOKEN=your-super-secure-jwt-secret-here
 APP_IS_PROD=true
+
+# Session Configuration
 SESSION_SECRET=your-session-secret-here
+SESSION_NAME=__Secure-SessionId
+SESSION_MAX_AGE=604800
+SESSION_SECURE=true
+SESSION_HTTP_ONLY=true
+SESSION_SAME_SITE=Strict
+SESSION_DOMAIN=.myapp.com
+SESSION_CSRF_PROTECTION=true
+SESSION_REGENERATE_ON_AUTH=true
+SESSION_ROLLING=false
 
 # Database
 POSTGRES_HOST=prod-db.example.com
@@ -444,21 +498,11 @@ RATE_LIMIT_WINDOW=900 # 15 minutes
 ### Session Security in Production
 
 ```typescript
-// src/middleware/session.ts
+// Session configuration is now handled through configs/session.ts
 import { sessionMiddleware } from '@blitzbun/http/middlewares';
 
-const sessionConfig = {
-  name: '__Secure-SessionId', // Secure prefix
-  maxAge: 60 * 60 * 24 * 7, // 7 days
-  secure: true, // HTTPS only
-  httpOnly: true, // No JS access
-  sameSite: 'Strict' as const, // CSRF protection
-  domain: '.myapp.com', // Subdomain sharing
-  csrfProtection: true, // Enable CSRF tokens
-  regenerateOnAuth: true, // Prevent fixation
-  rolling: false, // Don't extend on each request
-  secret: process.env.SESSION_SECRET, // Strong secret
-};
+// Configuration is automatically loaded from configs/session.ts
+// which uses environment variables with sensible defaults
 
 // Custom session validation
 export const authenticatedSession = async (req, res, next) => {
@@ -536,6 +580,7 @@ const sessionConfig = {
 For in-depth guides and advanced features, see the [docs](./docs/) folder:
 
 ### Core Components
+
 - [📱 Application](./docs/application.md) - Application container and lifecycle
 - [🏗️ Container](./docs/container.md) - Dependency injection system
 - [⚙️ Commands](./docs/command.md) - CLI command structure
@@ -545,6 +590,7 @@ For in-depth guides and advanced features, see the [docs](./docs/) folder:
 - [⚡ Jobs](./docs/job.md) - Background job processing
 
 ### Application Kernels
+
 - [🏛️ Kernels Overview](./docs/kernels.md) - Application execution modes
 - [🌐 HTTP Kernel](./docs/kernels/http-kernel.md) - Web server kernel
 - [💻 Console Kernel](./docs/kernels/console-kernel.md) - CLI kernel
@@ -552,6 +598,7 @@ For in-depth guides and advanced features, see the [docs](./docs/) folder:
 - [👷 Worker Kernel](./docs/kernels/worker-kernel.md) - Background processing
 
 ### Database & Storage
+
 - [🗃️ Database](./docs/database.md) - Database operations
 - [📊 Models](./docs/models.md) - Data models
 - [🏪 Repository](./docs/repository.md) - Data access layer
