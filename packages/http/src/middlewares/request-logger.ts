@@ -23,7 +23,7 @@ export default function createRequestLoggerMiddleware(
     try {
       next();
       res.onEnd(async () => {
-        logger.info({
+        logger.info('Request completed', {
           url: req.getUrl(),
           requestId: req.id,
           method: req.method,
@@ -31,7 +31,7 @@ export default function createRequestLoggerMiddleware(
         });
       });
     } catch (error) {
-      logger.error({
+      logger.error('Request failed', {
         url: req.getUrl(),
         requestId: req.id,
         method: req.method,
