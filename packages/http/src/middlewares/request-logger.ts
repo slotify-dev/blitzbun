@@ -5,6 +5,12 @@ import {
   LoggerContract,
 } from '@blitzbun/contracts';
 
+function calculateResponseTime(startTime: bigint): string {
+  const endTime = process.hrtime.bigint();
+  const responseTimeMs = Math.round(Number(endTime - startTime) / 1000000);
+  return `${responseTimeMs} ms`;
+}
+
 export default function createRequestLoggerMiddleware(
   logger: LoggerContract
 ): HttpMiddleware {
@@ -14,34 +20,24 @@ export default function createRequestLoggerMiddleware(
     next: (err?: unknown) => void
   ) => {
     const startTime = process.hrtime.bigint();
-    const timestamp = new Date().toISOString();
-
     try {
       next();
       res.onEnd(async () => {
-        const endTime = process.hrtime.bigint();
-        const responseTimeMs = Math.round(
-          Number(endTime - startTime) / 1000000
-        );
         logger.info({
-          method: req.method,
-          requestId: req.id,
           url: req.getUrl(),
-          responseTimeMs,
+          requestId: req.id,
+          method: req.method,
+          responseTime: calculateResponseTime(startTime),
         });
       });
     } catch (error) {
-      const endTime = process.hrtime.bigint();
-      const responseTimeMs = Math.round(Number(endTime - startTime) / 1000000);
-
       logger.error({
-        responseTimeMs,
         url: req.getUrl(),
-        method: req.method,
         requestId: req.id,
+        method: req.method,
+        responseTime: calculateResponseTime(startTime),
         error: error instanceof Error ? error.message : String(error),
       });
-
       next(error);
     }
   };
